@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sedera Andriamanga — Automation IA</title>
+  <meta name="description" content="Portfolio moderne Automation IA: n8n, OpenAI, Python, workflows business." />
+  <style>
+    :root{
+      --bg:#070b14;
+      --bg2:#0b1222;
+      --card:#0f172a;
+      --line:rgba(148,163,184,.24);
+      --text:#e6edf7;
+      --muted:#9aa7bd;
+      --primary:#6ea8ff;
+      --accent:#2ee6d6;
+      --ok:#23d18b;
+      --shadow:0 25px 80px rgba(1,8,22,.45);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(900px 460px at 8% -5%, rgba(110,168,255,.18), transparent 55%),
+        radial-gradient(780px 420px at 94% 0%, rgba(46,230,214,.16), transparent 55%),
+        linear-gradient(180deg,var(--bg),var(--bg2));
+      overflow-x:hidden;
+    }
+    .bg-orb{
+      position:fixed;border-radius:50%;filter:blur(45px);opacity:.3;z-index:0;pointer-events:none;
+      animation: drift 16s ease-in-out infinite;
+    }
+    .orb1{width:260px;height:260px;background:#60a5fa;left:-80px;top:120px;}
+    .orb2{width:220px;height:220px;background:#2dd4bf;right:-80px;top:220px;animation-delay:2s;}
+    @keyframes drift{0%,100%{transform:translateY(0)}50%{transform:translateY(-24px)}}
+
+    .container{width:min(1120px,92%);margin:0 auto;position:relative;z-index:1}
+    .nav{position:sticky;top:0;z-index:9;background:rgba(7,11,20,.78);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+    .nav-in{display:flex;justify-content:space-between;align-items:center;padding:14px 0}
+    .logo{font-weight:800;letter-spacing:.2px}
+    .logo span{color:var(--accent)}
+    .nav-links{display:flex;gap:18px}
+    .nav-links a{color:var(--muted);text-decoration:none;font-size:14px}
+    .nav-links a:hover{color:var(--text)}
+
+    .hero{padding:74px 0 34px;display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid rgba(46,230,214,.4);border-radius:999px;background:rgba(46,230,214,.1);font-size:12px;color:#b3fff8}
+    .pulse{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(35,209,139,.6);animation:pulse 1.8s infinite}
+    @keyframes pulse{70%{box-shadow:0 0 0 10px rgba(35,209,139,0)}100%{box-shadow:0 0 0 0 rgba(35,209,139,0)}}
+    h1{font-size:clamp(30px,5.4vw,54px);line-height:1.06;margin:14px 0;letter-spacing:-.02em}
+    .lead{color:var(--muted);font-size:17px;max-width:680px;margin:0 0 20px}
+    .cta{display:flex;gap:11px;flex-wrap:wrap}
+    .btn{padding:11px 16px;border-radius:12px;border:1px solid var(--line);text-decoration:none;font-size:14px;font-weight:600;transition:.2s ease}
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:linear-gradient(135deg,#93c5fd,#2ee6d6);color:#06101f;border:none;box-shadow:0 10px 30px rgba(46,230,214,.22)}
+    .btn-soft{background:rgba(15,23,42,.62);color:var(--text)}
+
+    .hero-card{
+      background:linear-gradient(180deg,rgba(15,23,42,.92),rgba(11,18,34,.95));
+      border:1px solid var(--line);
+      border-radius:18px;padding:18px;box-shadow:var(--shadow);overflow:hidden;position:relative
+    }
+    .hero-card::after{
+      content:"";position:absolute;inset:auto -40% -50% auto;width:280px;height:280px;border-radius:50%;
+      background:radial-gradient(circle,rgba(110,168,255,.32),transparent 65%);animation:spin 10s linear infinite
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .workflow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:relative;z-index:1}
+    .node{padding:7px 10px;border-radius:10px;background:#0b1428;border:1px solid #233251;font-size:12px}
+    .arrow{color:#7fb6ff;font-weight:700}
+    .kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;position:relative;z-index:1}
+    .kpi div{background:#0b1428;border:1px solid #243453;border-radius:10px;padding:8px}
+    .kpi b{display:block;font-size:16px}
+    .kpi span{font-size:12px;color:var(--muted)}
+
+    section{padding:26px 0}
+    .title{margin:0 0 10px;font-size:24px}
+    .sub{margin:0 0 18px;color:var(--muted)}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .card{
+      background:linear-gradient(180deg,var(--card),#0c1529);
+      border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:var(--shadow);
+      transition:transform .22s ease,border-color .22s ease, box-shadow .22s ease;
+    }
+    .card:hover{transform:translateY(-3px);border-color:rgba(110,168,255,.55);box-shadow:0 20px 40px rgba(2,12,30,.45)}
+    .card h3{margin:0 0 7px;font-size:17px}
+    .card p{margin:0;color:var(--muted);font-size:14px}
+
+    .projects{display:grid;gap:11px}
+    .project{
+      display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;
+      background:linear-gradient(180deg,var(--card),#0c1529);
+      border:1px solid var(--line);border-radius:14px;padding:14px
+    }
+    .project a{color:#9cc6ff;text-decoration:none}
+    .project a:hover{text-decoration:underline}
+    .pill{font-size:12px;border:1px solid rgba(110,168,255,.5);color:#cde2ff;background:rgba(110,168,255,.12);padding:6px 9px;border-radius:999px}
+    .project p{margin:7px 0 0;color:var(--muted)}
+
+    .offers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .offer ul{margin:0;padding-left:18px;color:var(--muted)}
+    .offer li{margin-bottom:6px}
+    .price{margin-top:9px;font-weight:700;color:#d9f7ff}
+
+    .contact{background:linear-gradient(180deg,#0f182d,#0d1426);border:1px solid var(--line);border-radius:16px;padding:18px}
+    .contact p{color:var(--muted);margin:0 0 13px}
+    .footer{margin-top:24px;padding:18px 0 30px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+
+    .reveal{opacity:0;transform:translateY(16px);transition:opacity .65s ease, transform .65s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+
+    @media (max-width:980px){
+      .hero{grid-template-columns:1fr}
+      .grid3,.offers{grid-template-columns:1fr}
+      .nav-links{display:none}
+      .kpi{grid-template-columns:1fr 1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-orb orb1"></div>
+  <div class="bg-orb orb2"></div>
+
+  <div class="nav">
+    <div class="container nav-in">
+      <div class="logo">Sedera<span>.Automation</span></div>
+      <div class="nav-links">
+        <a href="#services">Services</a>
+        <a href="#projets">Projets</a>
+        <a href="#offres">Offres</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </div>
+
+  <main class="container">
+    <section class="hero reveal">
+      <div>
+        <div class="badge"><span class="pulse"></span> Disponible pour missions remote FR/EU</div>
+        <h1>J'automatise le travail repetitif pour accelerer tes operations.</h1>
+        <p class="lead">
+          Workflows <strong>n8n + IA</strong> pensés business: moins d'oublis, plus de visibilité, plus de temps pour les actions à valeur.
+        </p>
+        <div class="cta">
+          <a class="btn btn-primary" href="mailto:sederaandriamanga@gmail.com">Discuter d'un besoin</a>
+          <a class="btn btn-soft" href="https://github.com/seder2610" target="_blank" rel="noopener">GitHub</a>
+          <a class="btn btn-soft" href="https://www.linkedin.com/in/sedera-andriamanga-456488216/" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+      <aside class="hero-card">
+        <div class="workflow">
+          <span class="node">Lead / Input</span><span class="arrow">-></span>
+          <span class="node">LLM Chain</span><span class="arrow">-></span>
+          <span class="node">Validation JSON</span><span class="arrow">-></span>
+          <span class="node">Notion / Sheets</span><span class="arrow">-></span>
+          <span class="node">Alertes Email</span>
+        </div>
+        <div class="kpi">
+          <div><b>Fast</b><span>1er workflow deployable en quelques jours</span></div>
+          <div><b>Reliable</b><span>logs, statuts et branches erreurs</span></div>
+          <div><b>Actionable</b><span>SOP claire pour l'equipe</span></div>
+        </div>
+      </aside>
+    </section>
+
+    <section id="services" class="reveal">
+      <h2 class="title">Ce que je fais</h2>
+      <p class="sub">Des automatisations directement utiles aux equipes sales, ops et contenu.</p>
+      <div class="grid3">
+        <article class="card">
+          <h3>Automatisation ops</h3>
+          <p>Relances, suivi pipeline, handoff sales -> delivery, reporting repetitive.</p>
+        </article>
+        <article class="card">
+          <h3>Agents IA productifs</h3>
+          <p>Prompts robustes, output structure, garde-fous et normalisation des donnees.</p>
+        </article>
+        <article class="card">
+          <h3>Fiabilisation</h3>
+          <p>Gestion d'erreurs, statuts, notifications et documentation pour l'autonomie equipe.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="projets" class="reveal">
+      <h2 class="title">Projets concrets</h2>
+      <p class="sub">Preuves deja publiees et presentables client.</p>
+      <div class="projects">
+        <article class="project">
+          <div>
+            <strong>LinkedIn Prospecting Agent (n8n + OpenAI)</strong><br />
+            <a href="https://github.com/seder2610/linkedin-prospecting-agent-n8n" target="_blank" rel="noopener">github.com/seder2610/linkedin-prospecting-agent-n8n</a>
+            <p>3 messages personnalises + parser JSON + logs multi-destination (Data Table / Sheets / Notion).</p>
+          </div>
+          <span class="pill">Prospection B2B</span>
+        </article>
+
+        <article class="project">
+          <div>
+            <strong>Diagnostic Automation Agent</strong><br />
+            <a href="https://github.com/seder2610/automation-diagnostic-agent-n8n" target="_blank" rel="noopener">github.com/seder2610/automation-diagnostic-agent-n8n</a>
+            <p>Quick wins + ROI estime + orientation d'offre pour accelérer l'avant-vente.</p>
+          </div>
+          <span class="pill">Pre-sales</span>
+        </article>
+
+        <article class="project">
+          <div>
+            <strong>LinkedIn Publisher Notion V1</strong><br />
+            <a href="../linkedin-publisher-notion-v1/" target="_blank" rel="noopener">Output/linkedin-publisher-notion-v1/</a>
+            <p>Queue Notion -> generation post -> status Queued/Sent -> notif email.</p>
+          </div>
+          <span class="pill">Content Ops</span>
+        </article>
+      </div>
+    </section>
+
+    <section id="offres" class="reveal">
+      <h2 class="title">Offres</h2>
+      <div class="offers">
+        <article class="card offer">
+          <h3>Audit Automation</h3>
+          <ul>
+            <li>Diagnostic process + priorites</li>
+            <li>Plan actionnable</li>
+            <li>Roadmap court terme</li>
+          </ul>
+          <div class="price">490 EUR</div>
+        </article>
+        <article class="card offer">
+          <h3>Sprint Automation</h3>
+          <ul>
+            <li>Implementation ciblee</li>
+            <li>Fiabilisation workflow</li>
+            <li>Documentation equipe</li>
+          </ul>
+          <div class="price">1800-3500 EUR</div>
+        </article>
+        <article class="card offer">
+          <h3>Maintenance / Partner</h3>
+          <ul>
+            <li>Monitoring + optimisation continue</li>
+            <li>Support evolutif</li>
+            <li>Priorisation impact business</li>
+          </ul>
+          <div class="price">a partir de 800 EUR/mois</div>
+        </article>
+      </div>
+    </section>
+
+    <section id="contact" class="reveal">
+      <div class="contact">
+        <h2 class="title" style="margin-top:0">Contact</h2>
+        <p>Envoie ton contexte en 5 lignes (process actuel, probleme, volume, outils, objectif) et je te propose une approche claire.</p>
+        <div class="cta">
+          <a class="btn btn-primary" href="mailto:sederaandriamanga@gmail.com">sederaandriamanga@gmail.com</a>
+          <a class="btn btn-soft" href="https://www.linkedin.com/in/sedera-andriamanga-456488216/" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <span>Antananarivo · Remote FR/EU</span>
+      <span>Portfolio v3 — Modern Automation</span>
+    </div>
+  </main>
+
+  <script>
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll(".reveal").forEach((el) => obs.observe(el));
+  </script>
+</body>
+</html>
