@@ -1,6 +1,6 @@
 # Portfolio One-Page
 
-Version propre prete a publier.
+Version propre prête à publier.
 
 ## Fichiers
 
@@ -8,8 +8,8 @@ Version propre prete a publier.
 
 ## Publication (GitHub Pages)
 
-1. Creer un repo GitHub vide (ex: `portfolio-automation-ia`)
-2. Mettre `index.html` a la racine du repo
+1. Créer un repo GitHub vide (ex: `portfolio-automation-ia`)
+2. Mettre `index.html` à la racine du repo
 3. Push sur `main`
 4. Repo -> `Settings` -> `Pages`
 5. Source: `Deploy from a branch`
@@ -22,4 +22,4 @@ URL finale:
 
 1. Aller sur `https://app.netlify.com/drop`
 2. Glisser le dossier contenant `index.html`
-3. Recuperer l'URL publique instantanee
+3. Récupérer l'URL publique instantanée
