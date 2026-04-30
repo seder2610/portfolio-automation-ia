@@ -115,10 +115,14 @@
     .pill{font-size:12px;border:1px solid rgba(110,168,255,.5);color:#cde2ff;background:rgba(110,168,255,.12);padding:6px 9px;border-radius:999px}
     .project p{margin:7px 0 0;color:var(--muted)}
 
-    .offers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    .offer ul{margin:0;padding-left:18px;color:var(--muted)}
-    .offer li{margin-bottom:6px}
-    .price{margin-top:9px;font-weight:700;color:#d9f7ff}
+    .offers{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .offer ul{margin:6px 0 0;padding-left:18px;color:var(--muted)}
+    .offer li{margin-bottom:5px;font-size:13px}
+    .price{margin-top:10px;font-weight:700;color:#d9f7ff;font-size:18px}
+    .price-sub{font-size:12px;color:var(--muted);font-weight:400;margin-top:2px}
+    .offer-badge{display:inline-block;font-size:11px;padding:3px 8px;border-radius:999px;margin-bottom:8px}
+    .badge-entry{background:rgba(35,209,139,.15);border:1px solid rgba(35,209,139,.4);color:#23d18b}
+    .badge-popular{background:rgba(110,168,255,.15);border:1px solid rgba(110,168,255,.4);color:#93c5fd}
 
     .contact{background:linear-gradient(180deg,#0f182d,#0d1426);border:1px solid var(--line);border-radius:16px;padding:18px}
     .contact p{color:var(--muted);margin:0 0 13px}
@@ -143,6 +147,7 @@
     <div class="container nav-in">
       <div class="logo">Sedera<span>.Automation</span></div>
       <div class="nav-links">
+        <a href="#pourquoi">Pourquoi moi</a>
         <a href="#services">Services</a>
         <a href="#projets">Projets</a>
         <a href="#offres">Offres</a>
@@ -154,7 +159,7 @@
   <main class="container">
     <section class="hero reveal">
       <div>
-        <div class="badge"><span class="pulse"></span> Disponible pour des missions en remote FR/EU</div>
+        <div class="badge"><span class="pulse"></span> Disponible pour des missions à distance (FR/EU)</div>
         <div class="hero-head">
           <img class="hero-photo" src="https://github.com/seder2610.png" alt="Photo de Sedera Andriamanga" loading="lazy" />
         </div>
@@ -182,6 +187,25 @@
           <div><b>SOP incluse</b><span>Autonomie équipe</span></div>
         </div>
       </aside>
+    </section>
+
+    <section id="pourquoi" class="reveal">
+      <h2 class="title">Pourquoi moi</h2>
+      <p class="sub">Un profil technique solide, pas un autodidacte du weekend.</p>
+      <div class="grid3">
+        <article class="card">
+          <h3>Bac+4 Génie Logiciel & IA</h3>
+          <p>Formation en informatique de gestion, génie logiciel et intelligence artificielle. Je comprends l'architecture avant de construire.</p>
+        </article>
+        <article class="card">
+          <h3>2 ans en conditions réelles</h3>
+          <p>Dev full-stack Odoo sur des projets ERP complexes — migrations, modules sur mesure, clients industrie, pharma, retail. Je livre en production, pas juste en démo.</p>
+        </article>
+        <article class="card">
+          <h3>Remote Madagascar → Europe</h3>
+          <p>Même fuseau que l'Europe de l'Ouest. Français courant. Prix compétitif sans compromis sur la qualité du livrable.</p>
+        </article>
+      </div>
     </section>
 
     <section id="services" class="reveal">
@@ -238,33 +262,49 @@
 
     <section id="offres" class="reveal">
       <h2 class="title">Offres</h2>
+      <p class="sub">Quatre niveaux d'engagement — du premier test à la collaboration long terme.</p>
       <div class="offers">
         <article class="card offer">
+          <span class="offer-badge badge-entry">Entrée sans risque</span>
+          <h3>Quick Win</h3>
+          <ul>
+            <li>1 workflow n8n livré en 2-3 jours</li>
+            <li>Cas d'usage : relances auto, suivi leads, alertes</li>
+            <li>Tests + SOP simple inclus</li>
+          </ul>
+          <div class="price">200 – 300 €</div>
+          <div class="price-sub">Idéal pour tester avant de s'engager sur un sprint</div>
+        </article>
+        <article class="card offer">
+          <span class="offer-badge badge-popular">Le plus demandé</span>
           <h3>Audit Automation</h3>
           <ul>
-            <li>Diagnostic process + priorités business</li>
-            <li>Plan actionnable</li>
-            <li>Roadmap court terme</li>
+            <li>Cartographie de votre process le plus fragile</li>
+            <li>2-3 quick wins identifiés et priorisés</li>
+            <li>Plan d'action court terme actionnable</li>
           </ul>
-          <div class="price">490 EUR</div>
+          <div class="price">490 €</div>
+          <div class="price-sub">Livré en 5 jours — sans call obligatoire</div>
         </article>
         <article class="card offer">
-          <h3>Sprint Automation</h3>
+          <h3>Agentic Sprint</h3>
           <ul>
-            <li>Implémentation ciblée</li>
-            <li>Fiabilisation du workflow</li>
-            <li>Documentation d'équipe</li>
+            <li>1-2 workflows critiques buildés et testés</li>
+            <li>Intégrations API (OpenAI, Notion, Sheets, CRM)</li>
+            <li>Documentation équipe + 30 jours de support</li>
           </ul>
-          <div class="price">1800-3500 EUR</div>
+          <div class="price">1 200 € à 1 800 €</div>
+          <div class="price-sub">Durée : 5-10 jours — résultat visible dès la livraison</div>
         </article>
         <article class="card offer">
-          <h3>Maintenance / Partner</h3>
+          <h3>Automation Partner</h3>
           <ul>
-            <li>Monitoring + optimisation continue</li>
-            <li>Support évolutif</li>
-            <li>Priorisation de l'impact business</li>
+            <li>Monitoring continu des workflows en prod</li>
+            <li>2 itérations ou nouvelles automatisations / mois</li>
+            <li>Rapport mensuel + priorisation par impact</li>
           </ul>
-          <div class="price">à partir de 800 EUR/mois</div>
+          <div class="price">à partir de 800 € / mois</div>
+          <div class="price-sub">Sur devis après un premier sprint livré</div>
         </article>
       </div>
     </section>
