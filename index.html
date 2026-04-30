@@ -47,6 +47,21 @@
     .nav-links a:hover{color:var(--text)}
 
     .hero{padding:74px 0 34px;display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center}
+    .hero-head{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      margin-bottom:12px;
+    }
+    .hero-photo{
+      width:74px;
+      height:74px;
+      border-radius:50%;
+      object-fit:cover;
+      border:2px solid rgba(110,168,255,.55);
+      box-shadow:0 10px 24px rgba(2,12,30,.45);
+      background:#0b1428;
+    }
     .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid rgba(46,230,214,.4);border-radius:999px;background:rgba(46,230,214,.1);font-size:12px;color:#b3fff8}
     .pulse{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(35,209,139,.6);animation:pulse 1.8s infinite}
     @keyframes pulse{70%{box-shadow:0 0 0 10px rgba(35,209,139,0)}100%{box-shadow:0 0 0 0 rgba(35,209,139,0)}}
@@ -140,12 +155,15 @@
     <section class="hero reveal">
       <div>
         <div class="badge"><span class="pulse"></span> Disponible pour des missions en remote FR/EU</div>
+        <div class="hero-head">
+          <img class="hero-photo" src="https://github.com/seder2610.png" alt="Photo de Sedera Andriamanga" loading="lazy" />
+        </div>
         <h1>J'automatise les opérations répétitives pour accélérer l'exécution business.</h1>
         <p class="lead">
           Des workflows <strong>n8n + IA</strong> conçus pour le terrain : moins d'oublis, plus de visibilité et davantage de temps pour les actions à forte valeur.
         </p>
         <div class="cta">
-          <a class="btn btn-primary" href="mailto:sederaandriamanga@gmail.com">Discuter de votre besoin</a>
+          <a class="btn btn-primary" href="mailto:sederaandriamanga@gmail.com">Recevoir un mini diagnostic (5 lignes)</a>
           <a class="btn btn-soft" href="https://github.com/seder2610" target="_blank" rel="noopener">GitHub</a>
           <a class="btn btn-soft" href="https://www.linkedin.com/in/sedera-andriamanga-456488216/" target="_blank" rel="noopener">LinkedIn</a>
         </div>
@@ -159,9 +177,9 @@
           <span class="node">Alertes Email</span>
         </div>
         <div class="kpi">
-          <div><b>Rapide</b><span>Premier workflow déployable en quelques jours</span></div>
-          <div><b>Fiable</b><span>Logs, statuts et gestion propre des erreurs</span></div>
-          <div><b>Actionnable</b><span>SOP claire pour une équipe autonome</span></div>
+          <div><b>&lt; 5 jours</b><span>Premier workflow live</span></div>
+          <div><b>3 destinations</b><span>Logs simultanés</span></div>
+          <div><b>SOP incluse</b><span>Autonomie équipe</span></div>
         </div>
       </aside>
     </section>
