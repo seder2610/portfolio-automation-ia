@@ -116,6 +116,7 @@
     .project p{margin:7px 0 0;color:var(--muted)}
 
     .offers{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .offer-full{grid-column:1/-1}
     .offer ul{margin:6px 0 0;padding-left:18px;color:var(--muted)}
     .offer li{margin-bottom:5px;font-size:13px}
     .price{margin-top:10px;font-weight:700;color:#d9f7ff;font-size:18px}
@@ -276,6 +277,17 @@
           <div class="price-sub">Idéal pour valider l'approche avant un sprint</div>
         </article>
         <article class="card offer">
+          <span class="offer-badge badge-entry">Premier livrable technique</span>
+          <h3>Quick Win</h3>
+          <ul>
+            <li>1 workflow n8n prioritaire, testé sur cas réels</li>
+            <li>SOP courte + handoff équipe</li>
+            <li>Scope unique et défini — idéal après audit ou si le besoin est déjà clair</li>
+          </ul>
+          <div class="price">790 €</div>
+          <div class="price-sub">Durée : 2–3 jours — pile entre l’audit et un sprint complet</div>
+        </article>
+        <article class="card offer">
           <span class="offer-badge badge-popular">Le plus demandé</span>
           <h3>Sprint Essential</h3>
           <ul>
@@ -296,7 +308,7 @@
           <div class="price">3 000 €</div>
           <div class="price-sub">Durée : 5-7 jours — scope défini ensemble avant démarrage</div>
         </article>
-        <article class="card offer">
+        <article class="card offer offer-full">
           <h3>Automation Partner</h3>
           <ul>
             <li>Monitoring continu des workflows en prod</li>
