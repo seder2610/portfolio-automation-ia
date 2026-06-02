@@ -3,351 +3,1040 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sedera Andriamanga — Automatisation IA</title>
-  <meta name="description" content="Portfolio premium en automatisation IA : n8n, OpenAI, Python et workflows orientés résultats business." />
+  <title>Sedera Andriamanga — Portfolio Automation IA</title>
+  <meta name="description" content="Dev Odoo reconverti en spécialiste automatisation IA. Systèmes n8n pour agences SEA." />
   <style>
-    :root{
-      --bg:#070b14;
-      --bg2:#0b1222;
-      --card:#0f172a;
-      --line:rgba(148,163,184,.24);
-      --text:#e6edf7;
-      --muted:#9aa7bd;
-      --primary:#6ea8ff;
-      --accent:#2ee6d6;
-      --ok:#23d18b;
-      --shadow:0 25px 80px rgba(1,8,22,.45);
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0}
-    body{
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(900px 460px at 8% -5%, rgba(110,168,255,.18), transparent 55%),
-        radial-gradient(780px 420px at 94% 0%, rgba(46,230,214,.16), transparent 55%),
-        linear-gradient(180deg,var(--bg),var(--bg2));
-      overflow-x:hidden;
-    }
-    .bg-orb{
-      position:fixed;border-radius:50%;filter:blur(45px);opacity:.3;z-index:0;pointer-events:none;
-      animation: drift 16s ease-in-out infinite;
-    }
-    .orb1{width:260px;height:260px;background:#60a5fa;left:-80px;top:120px;}
-    .orb2{width:220px;height:220px;background:#2dd4bf;right:-80px;top:220px;animation-delay:2s;}
-    @keyframes drift{0%,100%{transform:translateY(0)}50%{transform:translateY(-24px)}}
+    @property --angle { syntax:'<angle>'; initial-value:0deg; inherits:false; }
 
-    .container{width:min(1120px,92%);margin:0 auto;position:relative;z-index:1}
-    .nav{position:sticky;top:0;z-index:9;background:rgba(7,11,20,.78);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-    .nav-in{display:flex;justify-content:space-between;align-items:center;padding:14px 0}
-    .logo{font-weight:800;letter-spacing:.2px}
-    .logo span{color:var(--accent)}
-    .nav-links{display:flex;gap:18px}
-    .nav-links a{color:var(--muted);text-decoration:none;font-size:14px}
-    .nav-links a:hover{color:var(--text)}
-
-    .hero{padding:74px 0 34px;display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center}
-    .hero-head{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      margin-bottom:12px;
+    :root {
+      --dark:  #060614;
+      --dark2: #0d0c20;
+      --v:     #7c3aed;
+      --v2:    #a78bfa;
+      --v3:    rgba(124,58,237,.2);
+      --gold:  #c9963e;
+      --white: #f4f3ff;
+      --grey:  #9ca3af;
+      --grey2: #6b7280;
+      --line:  rgba(167,139,250,.16);
+      --sh:    0 24px 80px rgba(0,0,12,.7);
     }
-    .hero-photo{
-      width:74px;
-      height:74px;
-      border-radius:50%;
-      object-fit:cover;
-      border:2px solid rgba(110,168,255,.55);
-      box-shadow:0 10px 24px rgba(2,12,30,.45);
-      background:#0b1428;
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; }
+    body { font-family:Inter,system-ui,-apple-system,sans-serif; background:var(--dark); color:var(--white); overflow-x:hidden; }
+
+    /* ── Noise ── */
+    body::after {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:999;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity:.022; mix-blend-mode:overlay;
     }
-    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid rgba(46,230,214,.4);border-radius:999px;background:rgba(46,230,214,.1);font-size:12px;color:#b3fff8}
-    .pulse{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(35,209,139,.6);animation:pulse 1.8s infinite}
-    @keyframes pulse{70%{box-shadow:0 0 0 10px rgba(35,209,139,0)}100%{box-shadow:0 0 0 0 rgba(35,209,139,0)}}
-    h1{font-size:clamp(30px,5.4vw,54px);line-height:1.06;margin:14px 0;letter-spacing:-.02em}
-    .lead{color:var(--muted);font-size:17px;max-width:680px;margin:0 0 20px}
-    .cta{display:flex;gap:11px;flex-wrap:wrap}
-    .btn{padding:11px 16px;border-radius:12px;border:1px solid var(--line);text-decoration:none;font-size:14px;font-weight:600;transition:.2s ease}
-    .btn:hover{transform:translateY(-1px)}
-    .btn-primary{background:linear-gradient(135deg,#93c5fd,#2ee6d6);color:#06101f;border:none;box-shadow:0 10px 30px rgba(46,230,214,.22)}
-    .btn-soft{background:rgba(15,23,42,.62);color:var(--text)}
 
-    .hero-card{
-      background:linear-gradient(180deg,rgba(15,23,42,.92),rgba(11,18,34,.95));
-      border:1px solid var(--line);
-      border-radius:18px;padding:18px;box-shadow:var(--shadow);overflow:hidden;position:relative
+    /* ── Scroll progress ── */
+    #scroll-prog {
+      position:fixed; left:0; top:0; bottom:0; width:2px; z-index:400;
+      background:rgba(167,139,250,.06);
     }
-    .hero-card::after{
-      content:"";position:absolute;inset:auto -40% -50% auto;width:280px;height:280px;border-radius:50%;
-      background:radial-gradient(circle,rgba(110,168,255,.32),transparent 65%);animation:spin 10s linear infinite
+    #scroll-prog-fill {
+      width:100%; background:linear-gradient(to bottom,var(--v),var(--gold));
+      height:0%; transition:height .1s linear;
     }
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .workflow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:relative;z-index:1}
-    .node{padding:7px 10px;border-radius:10px;background:#0b1428;border:1px solid #233251;font-size:12px}
-    .arrow{color:#7fb6ff;font-weight:700}
-    .kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;position:relative;z-index:1}
-    .kpi div{background:#0b1428;border:1px solid #243453;border-radius:10px;padding:8px}
-    .kpi b{display:block;font-size:16px}
-    .kpi span{font-size:12px;color:var(--muted)}
 
-    section{padding:26px 0}
-    .title{margin:0 0 10px;font-size:24px}
-    .sub{margin:0 0 18px;color:var(--muted)}
-    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    .card{
-      background:linear-gradient(180deg,var(--card),#0c1529);
-      border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:var(--shadow);
-      transition:transform .22s ease,border-color .22s ease, box-shadow .22s ease;
+    /* ── Cursor glow ── */
+    #cglow {
+      position:fixed; width:420px; height:420px; border-radius:50%;
+      background:radial-gradient(circle,rgba(124,58,237,.1),transparent 65%);
+      pointer-events:none; z-index:0; transform:translate(-50%,-50%); opacity:0;
+      transition:opacity .3s;
     }
-    .card:hover{transform:translateY(-3px);border-color:rgba(110,168,255,.55);box-shadow:0 20px 40px rgba(2,12,30,.45)}
-    .card h3{margin:0 0 7px;font-size:17px}
-    .card p{margin:0;color:var(--muted);font-size:14px}
 
-    .projects{display:grid;gap:11px}
-    .project{
-      display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;
-      background:linear-gradient(180deg,var(--card),#0c1529);
-      border:1px solid var(--line);border-radius:14px;padding:14px
+    /* ── Canvas ── */
+    #particles { position:fixed; inset:0; pointer-events:none; z-index:1; }
+
+    /* ── Geometric floating shapes ── */
+    .geo {
+      position:absolute; pointer-events:none; opacity:.06;
+      animation:geo-drift ease-in-out infinite;
     }
-    .project a{color:#9cc6ff;text-decoration:none}
-    .project a:hover{text-decoration:underline}
-    .pill{font-size:12px;border:1px solid rgba(110,168,255,.5);color:#cde2ff;background:rgba(110,168,255,.12);padding:6px 9px;border-radius:999px}
-    .project p{margin:7px 0 0;color:var(--muted)}
+    @keyframes geo-drift {
+      0%,100% { transform:translateY(0) rotate(0deg); }
+      50%      { transform:translateY(-30px) rotate(180deg); }
+    }
 
-    .offers{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-    .offer-full{grid-column:1/-1}
-    .offer ul{margin:6px 0 0;padding-left:18px;color:var(--muted)}
-    .offer li{margin-bottom:5px;font-size:13px}
-    .price{margin-top:10px;font-weight:700;color:#d9f7ff;font-size:18px}
-    .price-sub{font-size:12px;color:var(--muted);font-weight:400;margin-top:2px}
-    .offer-badge{display:inline-block;font-size:11px;padding:3px 8px;border-radius:999px;margin-bottom:8px}
-    .badge-entry{background:rgba(35,209,139,.15);border:1px solid rgba(35,209,139,.4);color:#23d18b}
-    .badge-popular{background:rgba(110,168,255,.15);border:1px solid rgba(110,168,255,.4);color:#93c5fd}
+    /* ── Nav ── */
+    #nav {
+      position:fixed; top:0; left:0; right:0; z-index:500;
+      height:56px; display:flex; align-items:center; justify-content:space-between;
+      padding:0 44px;
+      transition:background .4s, backdrop-filter .4s, border-color .4s;
+      border-bottom:1px solid transparent;
+    }
+    #nav.stuck { background:rgba(6,6,20,.78); backdrop-filter:blur(18px); border-color:rgba(167,139,250,.1); }
+    .logo { font-weight:900; font-size:15px; letter-spacing:-.02em; }
+    .logo span { color:var(--v2); }
+    #nav-links { display:flex; gap:26px; }
+    #nav-links a { color:var(--grey2); text-decoration:none; font-size:12px; font-weight:700; letter-spacing:.02em; transition:color .2s; }
+    #nav-links a:hover { color:var(--v2); }
 
-    .contact{background:linear-gradient(180deg,#0f182d,#0d1426);border:1px solid var(--line);border-radius:16px;padding:18px}
-    .contact p{color:var(--muted);margin:0 0 13px}
-    .footer{margin-top:24px;padding:18px 0 30px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+    /* ── Containers ── */
+    section { position:relative; z-index:2; }
+    .container { max-width:1080px; margin:0 auto; padding:0 44px; }
+    .sec-wrap { padding:100px 0; }
+    .sec-divider {
+      width:100%; height:1px;
+      background:linear-gradient(90deg,transparent,rgba(167,139,250,.2),var(--v3),rgba(167,139,250,.2),transparent);
+    }
 
-    .reveal{opacity:0;transform:translateY(16px);transition:opacity .65s ease, transform .65s ease}
-    .reveal.visible{opacity:1;transform:translateY(0)}
+    /* ── Orbs ── */
+    .bg-orb { position:absolute; border-radius:50%; filter:blur(80px); pointer-events:none; }
+    @keyframes drift { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-40px) scale(1.05)} }
 
-    @media (max-width:980px){
-      .hero{grid-template-columns:1fr}
-      .grid3,.offers{grid-template-columns:1fr}
-      .nav-links{display:none}
-      .kpi{grid-template-columns:1fr 1fr}
+    /* ── Grid bg ── */
+    .grid-bg {
+      position:absolute; inset:0; pointer-events:none;
+      background-image:linear-gradient(rgba(167,139,250,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(167,139,250,.03) 1px,transparent 1px);
+      background-size:56px 56px;
+    }
+
+    /* ── Eyebrow / title ── */
+    .eyebrow {
+      font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.16em; color:var(--gold);
+      display:flex; align-items:center; gap:10px; margin-bottom:16px;
+    }
+    .eyebrow::before { content:''; width:28px; height:1px; background:var(--gold); }
+    .sec-title { font-size:clamp(26px,3.8vw,46px); font-weight:900; line-height:1.08; letter-spacing:-.025em; margin-bottom:16px; }
+    .sec-body { font-size:15px; color:var(--grey); line-height:1.72; }
+
+    /* ── Buttons ── */
+    .btn {
+      padding:12px 22px; border-radius:12px; font:inherit; font-size:14px; font-weight:700;
+      text-decoration:none; border:1px solid transparent; cursor:pointer;
+      transition:transform .22s ease, box-shadow .22s; display:inline-flex; align-items:center;
+      gap:8px; position:relative; overflow:hidden;
+    }
+    .btn:hover { transform:translateY(-3px); }
+    .btn-v { background:linear-gradient(135deg,var(--v),#5b21b6); color:#fff; box-shadow:0 10px 28px rgba(124,58,237,.35); }
+    .btn-v:hover { box-shadow:0 16px 40px rgba(124,58,237,.5); }
+    .btn-o { background:rgba(201,150,62,.12); border-color:rgba(201,150,62,.35); color:var(--gold); }
+    .btn-g { background:rgba(255,255,255,.05); border-color:var(--line); color:var(--white); }
+    .btn-g:hover { border-color:rgba(167,139,250,.4); }
+    .btn-ring::before {
+      content:''; position:absolute; inset:-4px; border-radius:16px;
+      border:1px solid rgba(124,58,237,.5); animation:ring-pulse 2.5s ease-in-out infinite;
+    }
+    @keyframes ring-pulse { 0%,100%{transform:scale(1);opacity:.5} 50%{transform:scale(1.04);opacity:1} }
+
+    /* ── Reveals ── */
+    .reveal     { opacity:0; transform:translateY(32px); transition:opacity .7s cubic-bezier(.25,.46,.45,.94),transform .7s cubic-bezier(.25,.46,.45,.94); }
+    .reveal-l   { opacity:0; transform:translateX(-44px); transition:opacity .7s ease,transform .7s ease; }
+    .reveal-r   { opacity:0; transform:translateX(44px);  transition:opacity .7s ease,transform .7s ease; }
+    .reveal-s   { opacity:0; transform:scale(.92);        transition:opacity .7s ease,transform .7s ease; }
+    .is-visible { opacity:1 !important; transform:none !important; }
+    .d1{transition-delay:.1s} .d2{transition-delay:.18s} .d3{transition-delay:.26s} .d4{transition-delay:.34s} .d5{transition-delay:.42s} .d6{transition-delay:.5s}
+
+    /* ── Glitch ── */
+    .glitch { position:relative; }
+    .glitch::before, .glitch::after {
+      content:attr(data-text); position:absolute; inset:0; pointer-events:none;
+    }
+    .glitch::before { color:var(--v2); animation:glitch-a .4s step-end 1 .6s both; clip-path:inset(0 0 60% 0); }
+    .glitch::after  { color:var(--gold); animation:glitch-b .4s step-end 1 .7s both; clip-path:inset(60% 0 0 0); }
+    @keyframes glitch-a {
+      0%  { transform:translate(-3px,0); opacity:1; }
+      33% { transform:translate(3px,0); }
+      66% { transform:translate(0,-2px); }
+      100%{ transform:translate(0); opacity:0; }
+    }
+    @keyframes glitch-b {
+      0%  { transform:translate(3px,0); opacity:1; }
+      33% { transform:translate(-3px,0); }
+      66% { transform:translate(0,2px); }
+      100%{ transform:translate(0); opacity:0; }
+    }
+
+    /* ── Droplets ── */
+    .drops-layer { position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:1; }
+    .drop {
+      position:absolute; border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
+      animation:drip linear infinite;
+    }
+    @keyframes drip {
+      0%  { transform:translateY(-20px); opacity:0; }
+      6%  { opacity:1; }
+      88% { opacity:.55; }
+      100%{ transform:translateY(var(--fall)); opacity:0; }
+    }
+    .splash { position:absolute; border-radius:50%; border:1px solid rgba(167,139,250,.4); animation:splash-ring linear infinite; }
+    @keyframes splash-ring { 0%{transform:scale(0);opacity:.8} 100%{transform:scale(5);opacity:0} }
+
+    /* ═══════════════════════════
+       HERO
+    ═══════════════════════════ */
+    #hero { min-height:100vh; display:flex; align-items:center; padding:110px 0 60px; overflow:hidden; }
+    #hero .bg-orb.h1 { width:600px; height:600px; background:var(--v); left:-200px; top:-100px; opacity:.17; animation:drift 18s ease-in-out infinite; }
+    #hero .bg-orb.h2 { width:380px; height:380px; background:#2563eb; right:-60px; bottom:-60px; opacity:.12; animation:drift 22s ease-in-out infinite 3s; }
+    #hero .bg-orb.h3 { width:200px; height:200px; background:var(--gold); right:30%; top:15%; opacity:.09; animation:drift 16s ease-in-out infinite 6s; }
+    #blob { position:absolute; width:750px; height:750px; left:50%; top:50%; transform:translate(-40%,-50%); pointer-events:none; z-index:0; opacity:.065; }
+
+    .hero-inner { position:relative; z-index:2; display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center; }
+
+    .badge { display:inline-flex; align-items:center; gap:9px; padding:7px 16px; border-radius:999px; border:1px solid rgba(167,139,250,.3); background:rgba(124,58,237,.08); font-size:12px; color:var(--v2); width:fit-content; margin-bottom:22px; }
+    .pulse-dot { width:7px; height:7px; border-radius:50%; background:#22c55e; animation:pulse-a 2.2s infinite; }
+    @keyframes pulse-a { 70%{box-shadow:0 0 0 8px rgba(34,197,94,0)} 100%{box-shadow:0 0 0 0 rgba(34,197,94,0)} }
+
+    .hero-name { font-size:clamp(36px,5.2vw,66px); font-weight:900; line-height:.98; letter-spacing:-.035em; margin-bottom:22px; }
+    .hero-name .hl { color:var(--v2); }
+    .hero-name .sub { color:var(--grey); font-weight:400; font-size:.48em; display:block; margin-top:8px; }
+
+    /* typing cursor */
+    .typed::after { content:'|'; color:var(--v2); animation:blink .75s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    .hero-desc { font-size:15px; color:var(--grey); line-height:1.72; max-width:400px; margin-bottom:28px; }
+    .hero-desc strong { color:var(--white); }
+    .ctas { display:flex; gap:12px; flex-wrap:wrap; }
+
+    /* Animated border card */
+    .hero-card-wrap { perspective:900px; }
+    .hero-card {
+      background:linear-gradient(145deg,rgba(14,12,32,.95),rgba(22,18,44,.9)) padding-box,
+                 conic-gradient(from var(--angle),var(--v) 0%,var(--v2) 30%,var(--gold) 50%,var(--v2) 70%,var(--v) 100%) border-box;
+      border:1px solid transparent;
+      border-radius:22px; padding:28px; box-shadow:var(--sh); position:relative; overflow:hidden;
+      transform-style:preserve-3d; will-change:transform;
+      animation:rotate-border 5s linear infinite;
+    }
+    @keyframes rotate-border { to { --angle:360deg; } }
+    .hero-card-inner { position:relative; z-index:1; }
+    .hero-card::before { content:''; position:absolute; top:-80px; right:-80px; width:220px; height:220px; border-radius:50%; background:radial-gradient(circle,rgba(124,58,237,.28),transparent 65%); animation:spin-slow 12s linear infinite; }
+    @keyframes spin-slow { to { transform:rotate(360deg); } }
+
+    .wf-label { font-size:10px; text-transform:uppercase; letter-spacing:.14em; color:var(--grey2); font-weight:800; margin-bottom:18px; }
+    .wf-nodes { display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:22px; }
+    .wf-node { padding:7px 11px; border-radius:10px; background:rgba(255,255,255,.04); border:1px solid rgba(167,139,250,.22); font-size:12px; animation:node-float 4s ease-in-out infinite; }
+    .wf-node:nth-child(1){animation-delay:0s} .wf-node:nth-child(3){animation-delay:.8s} .wf-node:nth-child(5){animation-delay:1.6s} .wf-node:nth-child(7){animation-delay:2.4s}
+    @keyframes node-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+    .wf-arr { color:var(--v2); font-weight:900; }
+    .wf-kpis { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+    .wf-kpi { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); border-radius:12px; padding:12px; text-align:center; }
+    .wf-kpi b { display:block; font-size:20px; color:var(--v2); letter-spacing:-.02em; }
+    .wf-kpi small { font-size:11px; color:var(--grey); display:block; margin-top:3px; }
+
+    /* scroll hint arrow */
+    #scroll-hint { position:absolute; bottom:32px; left:50%; transform:translateX(-50%); z-index:3; animation:bounce 2s ease-in-out infinite; }
+    @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+    #scroll-hint svg { opacity:.35; }
+
+    /* ═══════════════════════════
+       STATS BAR
+    ═══════════════════════════ */
+    #stats { background:linear-gradient(90deg,rgba(124,58,237,.07),rgba(201,150,62,.05)); border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:48px 0; overflow:hidden; }
+    .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:0; }
+    .stat-item { text-align:center; padding:0 20px; position:relative; }
+    .stat-item + .stat-item::before { content:''; position:absolute; left:0; top:15%; bottom:15%; width:1px; background:var(--line); }
+    .stat-num { font-size:clamp(36px,4.5vw,58px); font-weight:900; letter-spacing:-.04em; line-height:1; background:linear-gradient(135deg,var(--v2),var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .stat-label { font-size:13px; color:var(--grey); margin-top:8px; }
+    .stat-sub { font-size:11px; color:var(--grey2); margin-top:4px; }
+
+    /* ═══════════════════════════
+       MARQUEE
+    ═══════════════════════════ */
+    #marquee { padding:36px 0; overflow:hidden; background:var(--dark); border-bottom:1px solid var(--line); }
+    .marquee-track { display:flex; gap:0; animation:marquee-scroll 28s linear infinite; width:max-content; }
+    .marquee-track:hover { animation-play-state:paused; }
+    @keyframes marquee-scroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+    .marquee-item {
+      display:inline-flex; align-items:center; gap:10px; padding:0 32px;
+      font-size:13px; font-weight:700; color:var(--grey2); white-space:nowrap;
+      transition:color .2s;
+    }
+    .marquee-item:hover { color:var(--v2); }
+    .marquee-dot { width:4px; height:4px; border-radius:50%; background:var(--v3); flex-shrink:0; }
+
+    /* ═══════════════════════════
+       DEV
+    ═══════════════════════════ */
+    #dev { background:linear-gradient(180deg,var(--dark) 0%,#0d0c22 50%,var(--dark) 100%); }
+    .dev-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; margin-top:48px; }
+
+    .timeline { display:flex; flex-direction:column; }
+    .tl-item { display:flex; gap:18px; }
+    .tl-axis { display:flex; flex-direction:column; align-items:center; width:14px; flex-shrink:0; }
+    .tl-dot { width:12px; height:12px; border-radius:50%; border:2px solid var(--v2); background:var(--dark); margin-top:2px; flex-shrink:0; transition:all .4s ease; }
+    .tl-item.is-visible .tl-dot { background:var(--v3); box-shadow:0 0 18px rgba(124,58,237,.6); }
+    .tl-line { width:1px; flex:1; min-height:36px; background:linear-gradient(to bottom,rgba(124,58,237,.4),rgba(124,58,237,.05)); margin:4px 0; overflow:hidden; position:relative; }
+    .tl-line::after { content:''; position:absolute; inset:0; background:linear-gradient(to bottom,var(--v2),transparent); transform:translateY(-100%); transition:transform 1.4s ease; }
+    .tl-item.is-visible .tl-line::after { transform:translateY(100%); }
+    .tl-body { padding-bottom:32px; }
+    .tl-year { font-size:11px; font-weight:800; letter-spacing:.08em; color:var(--v2); margin-bottom:5px; }
+    .tl-role { font-size:15px; font-weight:700; margin-bottom:6px; }
+    .tl-desc { font-size:13px; color:var(--grey); line-height:1.6; }
+
+    .tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:24px; }
+    .tag { padding:6px 13px; border-radius:9px; font-size:12px; font-weight:700; background:rgba(124,58,237,.09); border:1px solid rgba(167,139,250,.22); color:var(--v2); transform:translateY(18px); opacity:0; transition:transform .5s ease,opacity .5s ease,border-color .2s,background .2s; }
+    .tag.is-visible { transform:translateY(0); opacity:1; }
+    .tag:hover { background:rgba(124,58,237,.2); border-color:rgba(167,139,250,.5); cursor:default; }
+    .tag.t-gold { background:rgba(201,150,62,.1); border-color:rgba(201,150,62,.28); color:var(--gold); }
+
+    /* ═══════════════════════════
+       SERVICES
+    ═══════════════════════════ */
+    #services { background:linear-gradient(160deg,var(--dark) 0%,#120a28 50%,var(--dark) 100%); }
+    .svc-header { display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:end; margin-bottom:52px; }
+    .svc-checks { display:flex; flex-direction:column; gap:13px; }
+    .chk { display:flex; align-items:center; gap:12px; font-size:14px; color:var(--grey); }
+
+    .svc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .svc {
+      background:rgba(255,255,255,.028); border:1px solid var(--line); border-radius:18px; padding:22px;
+      position:relative; overflow:hidden; transform-style:preserve-3d; will-change:transform;
+      transition:border-color .3s,box-shadow .3s;
+    }
+    .svc::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--v2),transparent); opacity:0; transition:opacity .3s; }
+    .svc:hover { border-color:rgba(167,139,250,.42); box-shadow:0 24px 60px rgba(0,0,12,.55); }
+    .svc:hover::before { opacity:1; }
+    .svc-glow { position:absolute; width:180px; height:180px; border-radius:50%; background:radial-gradient(circle,rgba(124,58,237,.22),transparent 70%); pointer-events:none; opacity:0; transition:opacity .3s; transform:translate(-50%,-50%); }
+    .svc:hover .svc-glow { opacity:1; }
+    .svc-tag { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.1em; padding:3px 9px; border-radius:6px; margin-bottom:12px; display:inline-block; }
+    .t-mon { background:rgba(244,114,182,.1); color:#f9a8d4; border:1px solid rgba(244,114,182,.28); }
+    .t-rep { background:rgba(52,211,153,.08); color:#6ee7b7; border:1px solid rgba(52,211,153,.28); }
+    .t-onb { background:rgba(251,191,36,.1); color:#fcd34d; border:1px solid rgba(251,191,36,.28); }
+    .svc h3 { font-size:15px; font-weight:700; margin-bottom:9px; }
+    .svc p { font-size:13px; color:var(--grey); line-height:1.6; }
+
+    /* ═══════════════════════════
+       METHOD
+    ═══════════════════════════ */
+    #method { background:linear-gradient(180deg,var(--dark) 0%,#0c0b1e 50%,var(--dark) 100%); }
+    .method-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:48px; }
+    .mcard {
+      background:rgba(255,255,255,.025); border:1px solid var(--line); border-radius:18px; padding:26px;
+      position:relative; overflow:hidden; transition:border-color .3s,transform .3s;
+    }
+    .mcard::before { content:''; position:absolute; inset:0; border-radius:inherit; background:radial-gradient(circle at 50% 0%,rgba(124,58,237,.2),transparent 60%); opacity:0; transition:opacity .3s; }
+    .mcard:hover { border-color:rgba(167,139,250,.4); transform:translateY(-5px); }
+    .mcard:hover::before { opacity:1; }
+    .mcard-icon { font-size:30px; margin-bottom:14px; display:block; filter:grayscale(.3); transition:filter .3s; }
+    .mcard:hover .mcard-icon { filter:grayscale(0); }
+    .mcard h3 { font-size:16px; font-weight:700; margin-bottom:10px; }
+    .mcard p { font-size:13px; color:var(--grey); line-height:1.65; }
+
+    /* ═══════════════════════════
+       WHY
+    ═══════════════════════════ */
+    #why { background:var(--dark); }
+    .why-box {
+      background:linear-gradient(145deg,rgba(14,12,32,.9),rgba(20,16,38,.95));
+      border:1px solid var(--line); border-radius:22px; padding:36px 40px; margin-top:48px;
+      position:relative; overflow:hidden;
+    }
+    .why-box::after { content:''; position:absolute; right:-80px; top:-80px; width:280px; height:280px; border-radius:50%; background:radial-gradient(circle,rgba(201,150,62,.1),transparent 65%); }
+    .why-box p { font-size:15px; color:var(--grey); line-height:1.78; max-width:800px; margin-bottom:16px; }
+    .why-box p:last-of-type { margin-bottom:20px; }
+    .why-box strong { color:var(--white); }
+    .why-highlight { display:inline-flex; align-items:center; gap:8px; padding:9px 18px; border-radius:10px; background:rgba(34,197,94,.08); border:1px solid rgba(34,197,94,.28); color:#86efac; font-size:13px; font-weight:700; }
+
+    /* ═══════════════════════════
+       AGENCY MAP
+    ═══════════════════════════ */
+    #amap { background:linear-gradient(180deg,var(--dark) 0%,#0b0920 50%,var(--dark) 100%); }
+    .amap-metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:32px 0; }
+    .amap-metric { background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:14px; padding:16px; text-align:center; }
+    .amap-metric b { display:block; font-size:26px; font-weight:900; letter-spacing:-.03em; }
+    .amap-metric span { font-size:12px; color:var(--grey); display:block; margin-top:4px; }
+    .amap-filters { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; }
+    .amap-cat { padding:8px 14px; border:1px solid var(--line); border-radius:999px; background:rgba(255,255,255,.03); color:var(--grey); font-size:12px; font-weight:700; cursor:pointer; transition:all .2s; font-family:inherit; display:inline-flex; align-items:center; gap:8px; }
+    .amap-cat:hover { color:var(--white); border-color:rgba(167,139,250,.4); }
+    .amap-cat.on { color:var(--white); border-color:rgba(46,230,214,.5); background:rgba(46,230,214,.07); }
+    .amap-cat .dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+    .amap-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:14px; }
+    .amap-card { background:linear-gradient(180deg,rgba(14,12,32,.9),rgba(12,10,26,.95)); border:1px solid var(--line); border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:9px; transition:border-color .22s,transform .22s; animation:card-in .35s ease both; }
+    @keyframes card-in { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    .amap-card:hover { border-color:rgba(167,139,250,.38); transform:translateY(-2px); }
+    .amap-card h4 { font-size:14px; font-weight:700; line-height:1.25; }
+    .amap-badge { font-size:10px; font-weight:700; padding:3px 9px; border-radius:999px; width:fit-content; }
+    .amap-lbl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--grey2); margin:4px 0 0; }
+    .amap-prob { font-size:12px; color:var(--grey); line-height:1.55; border-left:2px solid var(--line); padding-left:10px; }
+    .amap-sol { font-size:12px; color:var(--white); line-height:1.55; display:flex; gap:8px; align-items:flex-start; }
+    .amap-foot { margin-top:auto; display:flex; flex-direction:column; gap:7px; }
+    .amap-cta { padding:8px 12px; font-size:11px; font-weight:700; border-radius:10px; border:1px solid var(--line); background:rgba(167,139,250,.08); color:#cde2ff; text-decoration:none; text-align:center; transition:.18s ease; display:block; }
+    .amap-cta:hover { border-color:rgba(167,139,250,.45); background:rgba(167,139,250,.16); }
+    .amap-cta.demo { background:rgba(34,197,94,.08); color:#86efac; border-color:rgba(34,197,94,.3); }
+    .amap-cta.demo:hover { background:rgba(34,197,94,.16); }
+    .amap-soon { font-size:11px; color:var(--grey2); padding:6px; border-radius:8px; border:1px dashed var(--line); text-align:center; }
+    .amap-note { font-size:13px; color:var(--grey); line-height:1.6; margin-bottom:8px; max-width:720px; }
+
+    /* ═══════════════════════════
+       PROJECTS
+    ═══════════════════════════ */
+    #projects { background:linear-gradient(180deg,var(--dark) 0%,#0a0818 100%); }
+    .proj-layout { display:grid; grid-template-columns:1.1fr .9fr; gap:56px; align-items:start; margin-top:48px; }
+    .proj-list { display:flex; flex-direction:column; gap:14px; }
+    .proj-card { background:rgba(255,255,255,.025); border:1px solid var(--line); border-radius:16px; padding:18px; display:flex; justify-content:space-between; align-items:flex-start; gap:14px; transition:all .25s; position:relative; overflow:hidden; }
+    .proj-card::after { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:linear-gradient(to bottom,var(--v2),var(--gold)); transform:scaleY(0); transform-origin:top; transition:transform .35s ease; }
+    .proj-card:hover { border-color:rgba(167,139,250,.38); background:rgba(124,58,237,.06); transform:translateX(4px); }
+    .proj-card:hover::after { transform:scaleY(1); }
+    .proj-card h4 { font-size:13px; font-weight:700; margin-bottom:5px; }
+    .proj-card a { color:var(--v2); text-decoration:none; font-size:12px; }
+    .proj-card a:hover { text-decoration:underline; }
+    .proj-card p { font-size:12px; color:var(--grey); line-height:1.5; margin-top:5px; }
+    .proj-pill { font-size:11px; padding:4px 10px; border-radius:999px; white-space:nowrap; border:1px solid rgba(167,139,250,.35); color:var(--v2); background:rgba(124,58,237,.1); flex-shrink:0; }
+
+    .proc-box { background:rgba(255,255,255,.022); border:1px solid var(--line); border-radius:20px; padding:28px; position:sticky; top:80px; }
+    .proc-title { font-size:10px; text-transform:uppercase; letter-spacing:.14em; color:var(--grey2); font-weight:800; margin-bottom:22px; }
+    .proc-steps { display:flex; flex-direction:column; gap:20px; }
+    .proc-step { display:flex; gap:14px; align-items:flex-start; }
+    .pnum { width:32px; height:32px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; }
+    .pn1 { background:rgba(167,139,250,.12); border:1px solid rgba(167,139,250,.35); color:var(--v2); }
+    .pn2 { background:rgba(52,211,153,.08); border:1px solid rgba(52,211,153,.35); color:#6ee7b7; }
+    .pn3 { background:rgba(201,150,62,.1); border:1px solid rgba(201,150,62,.35); color:var(--gold); }
+    .proc-step strong { font-size:13px; display:block; margin-bottom:4px; }
+    .proc-step span { font-size:12px; color:var(--grey); line-height:1.55; }
+    .guar { font-size:12px; color:#22c55e; text-align:center; margin-top:18px; padding-top:18px; border-top:1px solid rgba(255,255,255,.05); }
+
+    /* ═══════════════════════════
+       CONTACT
+    ═══════════════════════════ */
+    #contact { background:linear-gradient(160deg,var(--dark) 0%,#160a32 50%,var(--dark) 100%); min-height:80vh; display:flex; align-items:center; }
+    .contact-inner { text-align:center; max-width:640px; margin:0 auto; }
+    .c-eyebrow { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.16em; color:var(--gold); display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:20px; }
+    .c-eyebrow::before,.c-eyebrow::after { content:''; width:28px; height:1px; background:var(--gold); }
+    .c-title { font-size:clamp(28px,4.5vw,54px); font-weight:900; line-height:1.06; letter-spacing:-.03em; margin-bottom:20px; }
+    .c-title .v { color:var(--v2); }
+    .c-body { font-size:15px; color:var(--grey); line-height:1.7; margin-bottom:32px; }
+    .c-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:36px; }
+    .c-footer { display:flex; gap:24px; justify-content:center; flex-wrap:wrap; font-size:12px; color:var(--grey2); }
+    .c-footer a { color:var(--grey2); text-decoration:none; transition:color .2s; }
+    .c-footer a:hover { color:var(--v2); }
+
+    footer { padding:28px 44px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; font-size:12px; color:var(--grey2); }
+
+    /* ── Responsive ── */
+    @media (max-width:860px) {
+      .hero-inner,.dev-grid,.svc-header,.proj-layout { grid-template-columns:1fr; gap:36px; }
+      .svc-grid,.method-grid,.stats-grid { grid-template-columns:1fr 1fr; }
+      #nav { padding:0 20px; } #nav-links { display:none; }
+      .container { padding:0 20px; }
+      .proc-box { position:static; }
+    }
+    @media (max-width:520px) {
+      .svc-grid,.method-grid,.stats-grid { grid-template-columns:1fr; }
     }
   </style>
 </head>
 <body>
-  <div class="bg-orb orb1"></div>
-  <div class="bg-orb orb2"></div>
 
-  <div class="nav">
-    <div class="container nav-in">
-      <div class="logo">Sedera<span>.Automation</span></div>
-      <div class="nav-links">
-        <a href="#pourquoi">Pourquoi moi</a>
-        <a href="#services">Services</a>
-        <a href="#projets">Projets</a>
-        <a href="#offres">Offres</a>
-        <a href="#contact">Contact</a>
+<!-- Scroll progress -->
+<div id="scroll-prog"><div id="scroll-prog-fill"></div></div>
+
+<!-- Cursor glow -->
+<div id="cglow"></div>
+
+<!-- Particles -->
+<canvas id="particles"></canvas>
+
+<!-- Nav -->
+<nav id="nav">
+  <div class="logo">Sedera<span>.Automation</span></div>
+  <div id="nav-links">
+    <a href="#hero">Accueil</a>
+    <a href="#dev">Racines</a>
+    <a href="#services">Offres</a>
+    <a href="#amap">Carte métier</a>
+    <a href="#projects">Projets</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════ HERO -->
+<section id="hero">
+  <div class="grid-bg"></div>
+  <div class="bg-orb h1"></div><div class="bg-orb h2"></div><div class="bg-orb h3"></div>
+  <div class="drops-layer" id="hero-drops"></div>
+  <!-- Geometric shapes -->
+  <div class="geo" style="width:80px;height:80px;border:1px solid rgba(167,139,250,.3);border-radius:12px;top:18%;right:12%;animation-duration:11s"></div>
+  <div class="geo" style="width:50px;height:50px;border:1px solid rgba(201,150,62,.3);border-radius:50%;top:72%;left:8%;animation-duration:14s;animation-delay:3s"></div>
+  <div class="geo" style="width:100px;height:2px;background:linear-gradient(90deg,transparent,rgba(167,139,250,.4),transparent);top:35%;left:5%;animation-duration:9s;animation-delay:1s"></div>
+  <div class="geo" style="width:60px;height:60px;border:1px solid rgba(167,139,250,.2);transform:rotate(45deg);bottom:22%;right:20%;animation-duration:16s;animation-delay:5s"></div>
+  <svg id="blob" viewBox="0 0 700 700" fill="var(--v)" xmlns="http://www.w3.org/2000/svg"><path/></svg>
+  <div class="container">
+    <div class="hero-inner">
+      <div>
+        <div class="badge reveal"><span class="pulse-dot"></span>Remote FR/EU · Disponible</div>
+        <h1 class="hero-name">
+          <span class="reveal d1" data-parallax="-0.05">Sedera</span><br>
+          <span class="reveal d2 hl glitch" data-text="Automation" data-parallax="-0.08">Automation</span>
+          <span class="sub reveal d3" data-parallax="-0.02" id="typed-el"></span>
+        </h1>
+        <p class="hero-desc reveal d4">
+          Dev Odoo reconverti en spécialiste <strong>automatisation IA</strong>.
+          Je construis les systèmes n8n que votre équipe n'a pas le temps de monter —
+          alertes budget, reporting auto, onboarding client.
+        </p>
+        <div class="ctas reveal d5">
+          <a class="btn btn-v btn-ring" href="mailto:sederaandriamanga@gmail.com?subject=Diagnostic%2030%20min&body=Bonjour%20Sedera%2C%20je%20souhaite%20un%20diagnostic%20de%2030%20min.">Diagnostic 30 min — offert</a>
+          <a class="btn btn-o" href="https://github.com/seder2610" target="_blank" rel="noopener">GitHub</a>
+          <a class="btn btn-g" href="https://www.linkedin.com/in/sedera-andriamanga/" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+      <div class="hero-card-wrap reveal-r">
+        <div class="hero-card" id="tilt-card">
+          <div class="hero-card-inner">
+            <p class="wf-label">Workflow type — agence SEA</p>
+            <div class="wf-nodes">
+              <span class="wf-node">Google Ads</span><span class="wf-arr">→</span>
+              <span class="wf-node">Meta</span><span class="wf-arr">→</span>
+              <span class="wf-node">n8n</span><span class="wf-arr">→</span>
+              <span class="wf-node">Slack</span>
+            </div>
+            <div class="wf-kpis">
+              <div class="wf-kpi"><b class="count" data-val="20" data-pre="~">0</b><small>h récupérées/mois</small></div>
+              <div class="wf-kpi"><b>&lt; 5j</b><small>premier live</small></div>
+              <div class="wf-kpi"><b>30 min</b><small>diagnostic offert</small></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+  <div id="scroll-hint">
+    <svg width="24" height="36" viewBox="0 0 24 36" fill="none" stroke="white" stroke-width="1.5">
+      <rect x="1" y="1" width="22" height="34" rx="11"/>
+      <circle cx="12" cy="10" r="2" fill="white" stroke="none"><animate attributeName="cy" values="10;22;10" dur="1.8s" repeatCount="indefinite"/></circle>
+    </svg>
+  </div>
+</section>
 
-  <main class="container">
-    <section class="hero reveal">
-      <div>
-        <div class="badge"><span class="pulse"></span> Disponible pour des missions à distance (FR/EU)</div>
-        <div class="hero-head">
-          <img class="hero-photo" src="https://github.com/seder2610.png" alt="Photo de Sedera Andriamanga" loading="lazy" />
-        </div>
-        <h1>J'automatise les process critiques des agences — pour qu'elles exécutent plus vite, sans recruter.</h1>
-        <p class="lead">
-          Sprints <strong>n8n + IA</strong> livrés en moins d'une semaine : un process fragile entré, un workflow opérationnel sorti — avec SOP et tracking inclus.
-        </p>
-        <div class="cta">
-          <a class="btn btn-primary" href="mailto:sederaandriamanga@gmail.com">Recevoir un mini diagnostic (5 lignes)</a>
-          <a class="btn btn-soft" href="https://github.com/seder2610" target="_blank" rel="noopener">GitHub</a>
-          <a class="btn btn-soft" href="https://www.linkedin.com/in/sedera-andriamanga-456488216/" target="_blank" rel="noopener">LinkedIn</a>
-        </div>
+<!-- ══════════════════════════════════════════ STATS -->
+<section id="stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item reveal d1">
+        <div class="stat-num"><span class="count" data-val="20" data-pre="~" data-suf="h">0</span></div>
+        <div class="stat-label">Récupérées / mois</div>
+        <div class="stat-sub">sur reporting + alertes</div>
       </div>
-      <aside class="hero-card">
-        <div class="workflow">
-          <span class="node">Lead / Input</span><span class="arrow">-></span>
-          <span class="node">LLM Chain</span><span class="arrow">-></span>
-          <span class="node">Validation JSON</span><span class="arrow">-></span>
-          <span class="node">Notion / Sheets</span><span class="arrow">-></span>
-          <span class="node">Alertes Email</span>
-        </div>
-        <div class="kpi">
-          <div><b>&lt; 5 jours</b><span>Premier workflow live</span></div>
-          <div><b>3 destinations</b><span>Logs simultanés</span></div>
-          <div><b>SOP incluse</b><span>Autonomie équipe</span></div>
-        </div>
-      </aside>
-    </section>
-
-    <section id="pourquoi" class="reveal">
-      <h2 class="title">Pourquoi moi</h2>
-      <p class="sub">Un profil technique solide, pas un autodidacte du weekend.</p>
-      <div class="grid3">
-        <article class="card">
-          <h3>Bac+4 Génie Logiciel & IA</h3>
-          <p>Formation en informatique de gestion, génie logiciel et intelligence artificielle. Je comprends l'architecture avant de construire.</p>
-        </article>
-        <article class="card">
-          <h3>2 ans en conditions réelles</h3>
-          <p>Dev full-stack Odoo sur des projets ERP complexes — migrations, modules sur mesure, clients industrie, pharma, retail. Je livre en production, pas juste en démo.</p>
-        </article>
-        <article class="card">
-          <h3>Remote Madagascar → Europe</h3>
-          <p>Même fuseau que l'Europe de l'Ouest. Français courant. Prix compétitif sans compromis sur la qualité du livrable.</p>
-        </article>
+      <div class="stat-item reveal d2">
+        <div class="stat-num"><span class="count" data-val="5" data-pre="" data-suf="j">0</span></div>
+        <div class="stat-label">Délai de livraison</div>
+        <div class="stat-sub">premier système en prod</div>
       </div>
-    </section>
-
-    <section id="services" class="reveal">
-      <h2 class="title">Ce que j'automatise</h2>
-      <p class="sub">Les process qui mangent du temps sans créer de valeur.</p>
-      <div class="grid3">
-        <article class="card">
-          <h3>Ops &amp; reporting</h3>
-          <p>Relances automatiques, suivi de pipeline, handoff sales → delivery, reporting récurrent sans action manuelle.</p>
-        </article>
-        <article class="card">
-          <h3>Agents IA métier</h3>
-          <p>Diagnostic client, qualification de leads, génération de briefs — des agents qui s'adaptent au contexte de chaque entreprise.</p>
-        </article>
-        <article class="card">
-          <h3>Intégrations &amp; fiabilité</h3>
-          <p>Connexion API entre outils existants (Notion, Sheets, CRM, email), gestion d'erreurs et alertes pour que ça tourne sans surveillance.</p>
-        </article>
+      <div class="stat-item reveal d3">
+        <div class="stat-num"><span class="count" data-val="2" data-pre="" data-suf=" ans">0</span></div>
+        <div class="stat-label">Dev Odoo ERP</div>
+        <div class="stat-sub">modules, API, prod</div>
       </div>
-    </section>
-
-    <section id="projets" class="reveal">
-      <h2 class="title">Projets concrets</h2>
-      <p class="sub">Des preuves déjà publiées, prêtes à être partagées en contexte client.</p>
-      <div class="projects">
-        <article class="project">
-          <div>
-            <strong>LinkedIn Prospecting Agent (n8n + OpenAI)</strong><br />
-            <a href="https://github.com/seder2610/linkedin-prospecting-agent-n8n" target="_blank" rel="noopener">github.com/seder2610/linkedin-prospecting-agent-n8n</a>
-            <p>3 messages personnalisés, parser JSON strict et logs multi-destination (Data Table / Sheets / Notion).</p>
-          </div>
-          <span class="pill">Prospection B2B</span>
-        </article>
-
-        <article class="project">
-          <div>
-            <strong>Diagnostic Automation Agent</strong><br />
-            <a href="https://github.com/seder2610/automation-diagnostic-agent-n8n" target="_blank" rel="noopener">github.com/seder2610/automation-diagnostic-agent-n8n</a>
-            <p>Quick wins, ROI estimé et orientation d'offre pour accélérer l'avant-vente.</p>
-          </div>
-          <span class="pill">Pre-sales</span>
-        </article>
-
-        <article class="project">
-          <div>
-            <strong>LinkedIn Publisher Notion V1</strong><br />
-            <a href="https://github.com/seder2610/linkedin-publisher-notion.git" target="_blank" rel="noopener">github.com/seder2610/linkedin-publisher-notion</a>
-            <p>Queue Notion -> génération de post -> statuts Queued/Sent -> notification email.</p>
-          </div>
-          <span class="pill">Content Ops</span>
-        </article>
+      <div class="stat-item reveal d4">
+        <div class="stat-num"><span class="count" data-val="100" data-pre="" data-suf="%">0</span></div>
+        <div class="stat-label">Remote</div>
+        <div class="stat-sub">FR/EU · UTC+3</div>
       </div>
-    </section>
-
-    <section id="offres" class="reveal">
-      <h2 class="title">Offres</h2>
-      <p class="sub">Du premier diagnostic écrit jusqu'à la collaboration long terme.</p>
-      <div class="offers">
-        <article class="card offer">
-          <span class="offer-badge badge-entry">Entrée sans risque</span>
-          <h3>Audit Rapide</h3>
-          <ul>
-            <li>Cartographie asynchrone de votre process le plus fragile</li>
-            <li>3 quick wins priorisés par impact + ROI estimé</li>
-            <li>Plan d'action clair — livré en 48h sans call obligatoire</li>
-          </ul>
-          <div class="price">490 €</div>
-          <div class="price-sub">Idéal pour valider l'approche avant un sprint</div>
-        </article>
-        <article class="card offer">
-          <span class="offer-badge badge-entry">Premier livrable technique</span>
-          <h3>Quick Win</h3>
-          <ul>
-            <li>1 workflow n8n prioritaire, testé sur cas réels</li>
-            <li>SOP courte + handoff équipe</li>
-            <li>Scope unique et défini — idéal après audit ou si le besoin est déjà clair</li>
-          </ul>
-          <div class="price">790 €</div>
-          <div class="price-sub">Durée : 2–3 jours — pile entre l’audit et un sprint complet</div>
-        </article>
-        <article class="card offer">
-          <span class="offer-badge badge-popular">Le plus demandé</span>
-          <h3>Sprint Essential</h3>
-          <ul>
-            <li>1 process critique automatisé de A à Z</li>
-            <li>Workflow n8n + IA opérationnel, testé sur cas réels</li>
-            <li>SOP équipe + tracking (Notion / Sheets / Email)</li>
-          </ul>
-          <div class="price">2 000 €</div>
-          <div class="price-sub">Durée : 3-5 jours — livrable visible dès la livraison</div>
-        </article>
-        <article class="card offer">
-          <h3>Sprint Complet</h3>
-          <ul>
-            <li>1 process critique + 1 extension (reporting avancé ou relances)</li>
-            <li>Intégrations API (OpenAI, Notion, Sheets, CRM)</li>
-            <li>Alertes, garde-fous, documentation équipe complète</li>
-          </ul>
-          <div class="price">3 000 €</div>
-          <div class="price-sub">Durée : 5-7 jours — scope défini ensemble avant démarrage</div>
-        </article>
-        <article class="card offer offer-full">
-          <h3>Automation Partner</h3>
-          <ul>
-            <li>Monitoring continu des workflows en prod</li>
-            <li>2 itérations ou nouvelles automatisations / mois</li>
-            <li>Rapport mensuel + priorisation par impact</li>
-          </ul>
-          <div class="price">900 € / mois</div>
-          <div class="price-sub">Disponible après un premier sprint livré</div>
-        </article>
-      </div>
-    </section>
-
-    <section id="contact" class="reveal">
-      <div class="contact">
-        <h2 class="title" style="margin-top:0">Contact</h2>
-        <p>Envoie-moi ton process le plus chronophage en 3 lignes. Je te renvoie un mini diagnostic écrit — gratuit, sans appel obligatoire — avec ce qui est automatisable et ce que ça vaut concrètement.</p>
-        <div class="cta">
-          <a class="btn btn-primary" href="mailto:sederaandriamanga@gmail.com">sederaandriamanga@gmail.com</a>
-          <a class="btn btn-soft" href="https://www.linkedin.com/in/sedera-andriamanga-456488216/" target="_blank" rel="noopener">LinkedIn</a>
-        </div>
-      </div>
-    </section>
-
-    <div class="footer">
-      <span>Antananarivo · Remote FR/EU</span>
-      <span>Portfolio v3 — Modern Automation</span>
     </div>
-  </main>
+  </div>
+</section>
 
-  <script>
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-          obs.unobserve(entry.target);
-        }
+<!-- ══════════════════════════════════════════ MARQUEE -->
+<section id="marquee">
+  <div class="marquee-track" id="mtrack"></div>
+</section>
+
+<div class="sec-divider"></div>
+
+<!-- ══════════════════════════════════════════ DEV -->
+<section id="dev" class="sec-wrap">
+  <div class="drops-layer" id="dev-drops"></div>
+  <div class="geo" style="width:120px;height:120px;border:1px solid rgba(167,139,250,.12);border-radius:50%;right:5%;top:10%;animation-duration:18s"></div>
+  <div class="container">
+    <p class="eyebrow reveal">Racines</p>
+    <h2 class="sec-title reveal d1">Dev d'abord,<br>automatiste ensuite.</h2>
+    <div class="dev-grid">
+      <div class="timeline">
+        <div class="tl-item reveal" id="tl0">
+          <div class="tl-axis"><div class="tl-dot"></div><div class="tl-line"></div></div>
+          <div class="tl-body">
+            <p class="tl-year">2022 – 2024</p>
+            <p class="tl-role">Développeur Odoo — ERP & intégrations</p>
+            <p class="tl-desc">Modules métiers custom, connecteurs API tierces, déploiements production en milieux industriels et pharmaceutiques.</p>
+          </div>
+        </div>
+        <div class="tl-item reveal d2" id="tl1">
+          <div class="tl-axis"><div class="tl-dot" style="border-color:var(--gold)"></div><div class="tl-line"></div></div>
+          <div class="tl-body">
+            <p class="tl-year" style="color:var(--gold)">2024 – Pivot</p>
+            <p class="tl-role">Transition vers l'automatisation IA</p>
+            <p class="tl-desc">Découverte de n8n, LLM APIs, agents IA. Les mêmes muscles (API, logique, code) — appliqués aux workflows business.</p>
+          </div>
+        </div>
+        <div class="tl-item reveal d3" id="tl2">
+          <div class="tl-axis"><div class="tl-dot" style="border-color:#22c55e;background:rgba(34,197,94,.18)"></div></div>
+          <div class="tl-body">
+            <p class="tl-year" style="color:#22c55e">2025 – Maintenant</p>
+            <p class="tl-role">Spécialiste Automation IA — agences SEA</p>
+            <p class="tl-desc">Focus précis : alertes, reporting et onboarding automatisés pour agences media. Remote France, UTC+3.</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="sec-body reveal">2 ans de dev Odoo ERP — modules custom, intégrations API, déploiements multi-secteurs. Cette base fait la différence : pas de boîtes noires, code lisible, livraisons en production réelle.</p>
+        <div class="tags" id="tags-wrap">
+          <span class="tag" data-delay="0">Python</span><span class="tag" data-delay="1">JavaScript</span><span class="tag" data-delay="2">Odoo ERP</span><span class="tag" data-delay="3">PostgreSQL</span><span class="tag" data-delay="4">REST API</span><span class="tag t-gold" data-delay="5">n8n</span><span class="tag t-gold" data-delay="6">OpenAI API</span><span class="tag t-gold" data-delay="7">Node.js</span><span class="tag t-gold" data-delay="8">AI Agents</span><span class="tag t-gold" data-delay="9">Webhooks</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divider" data-parallax="0.02"></div>
+
+<!-- ══════════════════════════════════════════ SERVICES -->
+<section id="services" class="sec-wrap">
+  <div class="bg-orb" style="width:500px;height:500px;background:var(--v);top:20%;left:-200px;opacity:.1;animation:drift 20s ease-in-out infinite"></div>
+  <div class="bg-orb" style="width:350px;height:350px;background:var(--gold);bottom:10%;right:-100px;opacity:.07;animation:drift 16s ease-in-out infinite 5s"></div>
+  <div class="drops-layer" id="svc-drops"></div>
+  <div class="container">
+    <div class="svc-header">
+      <div>
+        <p class="eyebrow reveal">Offres</p>
+        <h2 class="sec-title reveal d1">Ce que je construis.</h2>
+        <p class="sec-body reveal d2">Pas une agence IA généraliste. Trois systèmes précis pour récupérer du temps opérationnel dans les agences SEA.</p>
+      </div>
+      <div class="svc-checks">
+        <div class="chk reveal d1"><span style="color:#22c55e;font-size:16px">✓</span> Branché sur vos outils existants</div>
+        <div class="chk reveal d2"><span style="color:#22c55e;font-size:16px">✓</span> Livré en prod en 5 jours ouvrés</div>
+        <div class="chk reveal d3"><span style="color:#22c55e;font-size:16px">✓</span> Documenté — votre équipe comprend ce qui tourne</div>
+        <div class="chk reveal d4"><span style="color:var(--gold);font-size:16px">★</span> Garantie remboursement si pas livré à temps</div>
+      </div>
+    </div>
+    <div class="svc-grid">
+      <article class="svc reveal d1">
+        <div class="svc-glow"></div>
+        <span class="svc-tag t-mon">P-MON · Monitoring</span>
+        <h3>Alertes budget & perf</h3>
+        <p>Un compte dépasse son seuil le samedi soir ? Alerte Slack en moins de 15 min — avant que le client appelle lundi. Surveillance sur votre plus gros compte, règles sur mesure, test en conditions réelles.</p>
+      </article>
+      <article class="svc reveal d2">
+        <div class="svc-glow"></div>
+        <span class="svc-tag t-rep">P08 · Reporting</span>
+        <h3>Reporting mensuel auto</h3>
+        <p>Google Ads, Meta, GA4 → compilation → rapport narratif → envoi client. Le 1<sup>er</sup> du mois, vos équipes n'assemblent plus 45 min par client. Chaque nouveau compte n'ajoute presque plus de charge.</p>
+      </article>
+      <article class="svc reveal d3">
+        <div class="svc-glow"></div>
+        <span class="svc-tag t-onb">Onboarding</span>
+        <h3>Onboarding compte Ads</h3>
+        <p>Signature client → accès, checklist, questionnaire et dossiers créés automatiquement. Moins d'oublis, moins de « on verra lundi » quand l'équipe est débordée par les livraisons.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divider"></div>
+
+<!-- ══════════════════════════════════════════ METHOD -->
+<section id="method" class="sec-wrap">
+  <div class="container">
+    <p class="eyebrow reveal">Méthode</p>
+    <h2 class="sec-title reveal d1">Comment je construis.</h2>
+    <p class="sec-body reveal d2" style="max-width:600px">n8n au cœur — code Python/JS quand l'API l'exige. Pas de boîte noire, pas de dépendance cachée.</p>
+    <div class="method-grid">
+      <article class="mcard reveal d1">
+        <span class="mcard-icon">🔌</span>
+        <h3>Branché sur vos outils</h3>
+        <p>Google Ads, Meta, GA4, Looker Studio, Slack, Notion, email. On part de ce que vous utilisez déjà — pas d'usine à gaz ni de stack imposée.</p>
+      </article>
+      <article class="mcard reveal d2">
+        <span class="mcard-icon">🚀</span>
+        <h3>Livré en production</h3>
+        <p>2 ans de dev Odoo ERP multi-secteurs. Je documente, je teste sur vos cas réels — votre équipe sait ce qui tourne sans moi à côté.</p>
+      </article>
+      <article class="mcard reveal d3">
+        <span class="mcard-icon">🌍</span>
+        <h3>Remote, fuseau Europe</h3>
+        <p>Basé à Madagascar (UTC+3, comme Paris en hiver). Français natif. Communication async + points courts — pas de réunions qui bouffent la journée.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divider" data-parallax="0.02"></div>
+
+<!-- ══════════════════════════════════════════ WHY -->
+<section id="why" class="sec-wrap">
+  <div class="container">
+    <p class="eyebrow reveal">Positionnement</p>
+    <h2 class="sec-title reveal d1">Pourquoi travailler avec moi.</h2>
+    <div class="why-box reveal d2">
+      <p>Les agences SEA n'ont pas besoin d'une <strong>« agence IA »</strong> qui fait tout — elles ont besoin de <strong>quelqu'un qui monte le système</strong> que personne n'a le temps d'internaliser entre deux livraisons client.</p>
+      <p>Je ne remplace pas votre équipe media : je supprime les tâches répétitives qui les empêchent de faire du media. Chaque heure récupérée sur le reporting ou les alertes, c'est une heure de plus sur les campagnes, la stratégie, la relation client.</p>
+      <p>Focus précis : <strong>agences SEA françaises</strong> — pas une approche généraliste. Je connais le cycle mensuel, les urgences du week-end, les attentes clients sur le reporting. Ça change ce qu'on construit ensemble.</p>
+      <span class="why-highlight">✓ Garantie 5 jours ouvrés ou remboursement intégral, sans condition.</span>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divider" data-parallax="0.02"></div>
+
+<!-- ══════════════════════════════════════════ AGENCY MAP -->
+<section id="amap" class="sec-wrap">
+  <div class="bg-orb" style="width:600px;height:600px;background:var(--v);right:-200px;top:20%;opacity:.08;animation:drift 22s ease-in-out infinite"></div>
+  <div class="drops-layer" id="amap-drops"></div>
+  <div class="container">
+    <p class="eyebrow reveal">Carte métier</p>
+    <h2 class="sec-title reveal d1">Douleurs agences SEA.</h2>
+    <p class="sec-body reveal d2" style="max-width:680px">Je connais le métier au-delà de P-MON et P08. Filtre <strong style="color:var(--white)">Priorité SEA</strong> par défaut. Pas un catalogue — en rendez-vous on choisit <strong style="color:var(--white)">votre</strong> douleur n°1.</p>
+    <div class="amap-metrics reveal d3">
+      <div class="amap-metric"><b id="amap-total">18</b><span>problèmes listés</span></div>
+      <div class="amap-metric"><b>7</b><span>catégories</span></div>
+      <div class="amap-metric"><b id="amap-shown">8</b><span>affichés</span></div>
+    </div>
+    <p class="amap-note reveal">Quand une démo publique existe, le lien apparaît sur la carte.</p>
+    <div class="amap-filters reveal" id="amap-filters"></div>
+    <div class="amap-grid" id="amap-grid"></div>
+  </div>
+</section>
+
+<div class="sec-divider" data-parallax="0.02"></div>
+
+<!-- ══════════════════════════════════════════ PROJECTS -->
+<section id="projects" class="sec-wrap">
+  <div class="geo" style="width:70px;height:70px;border:1px solid rgba(201,150,62,.2);border-radius:50%;right:8%;top:15%;animation-duration:13s"></div>
+  <div class="container">
+    <p class="eyebrow reveal">Démos</p>
+    <h2 class="sec-title reveal d1">Code public, résultats réels.</h2>
+    <div class="proj-layout">
+      <div class="proj-list">
+        <article class="proj-card reveal d1">
+          <div>
+            <h4>Rapport marketing mensuel (P08)</h4>
+            <a href="https://github.com/seder2610/rapport_marketing_mensuel" target="_blank" rel="noopener">github.com/seder2610/rapport_marketing_mensuel</a>
+            <p>Pipeline n8n + Google Ads / Meta / GA4. Compilation multi-plateformes, synthèse narrative, sortie prête client (Notion ou PDF).</p>
+          </div>
+          <span class="proj-pill">Reporting SEA</span>
+        </article>
+        <article class="proj-card reveal d2">
+          <div>
+            <h4>Diagnostic Automation Agent</h4>
+            <a href="https://github.com/seder2610/automation-diagnostic-agent-n8n" target="_blank" rel="noopener">github.com/seder2610/automation-diagnostic-agent-n8n</a>
+            <p>n8n + OpenAI. Analyse contexte agence, sort 5 quick wins chiffrés en heures. Utilisé pour cadrer le diagnostic 30 min.</p>
+          </div>
+          <span class="proj-pill">Pre-sales</span>
+        </article>
+        <article class="proj-card reveal d3" style="opacity:.72;border-style:dashed">
+          <div>
+            <h4>LinkedIn Prospecting Agent</h4>
+            <a href="https://github.com/seder2610/linkedin-prospecting-agent-n8n" target="_blank" rel="noopener">github.com/seder2610/linkedin-prospecting-agent-n8n</a>
+            <p>Prospection B2B automatisée (messages, logs Notion). Projet perso open source.</p>
+          </div>
+          <span class="proj-pill">Perso</span>
+        </article>
+      </div>
+      <div class="proc-box reveal-r">
+        <p class="proc-title">Comment on démarre</p>
+        <div class="proc-steps">
+          <div class="proc-step">
+            <span class="pnum pn1">1</span>
+            <div><strong>Diagnostic — 30 min offert</strong><span>Plus gros compte Ads + reporting mensuel. Je dis si P-MON ou P08 et combien d'heures récupérées par mois.</span></div>
+          </div>
+          <div class="proc-step">
+            <span class="pnum pn2">2</span>
+            <div><strong>Sprint livrable — 3 à 5 jours</strong><span>Branchement APIs, test sur un vrai compte, documentation courte. Votre équipe sait ce qui tourne.</span></div>
+          </div>
+          <div class="proc-step">
+            <span class="pnum pn3">3</span>
+            <div><strong>Support continu</strong><span>Corrections, nouvelles règles, extension — sans repartir de zéro.</span></div>
+          </div>
+        </div>
+        <p class="guar">✓ 5 jours ouvrés ou remboursement intégral, sans condition.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divider"></div>
+
+<!-- ══════════════════════════════════════════ CONTACT -->
+<section id="contact">
+  <div class="bg-orb" style="width:500px;height:500px;background:var(--v);left:-200px;top:-100px;opacity:.15;animation:drift 18s ease-in-out infinite"></div>
+  <div class="bg-orb" style="width:300px;height:300px;background:var(--gold);right:-80px;bottom:-80px;opacity:.1;animation:drift 20s ease-in-out infinite 3s"></div>
+  <div class="drops-layer" id="contact-drops"></div>
+  <div class="geo" style="width:140px;height:140px;border:1px solid rgba(167,139,250,.1);border-radius:22px;right:10%;top:20%;animation-duration:20s"></div>
+  <div class="container">
+    <div class="contact-inner">
+      <p class="c-eyebrow reveal">Contact</p>
+      <h2 class="c-title reveal d1">30 min sur votre<br><span class="v">plus gros compte.</span></h2>
+      <p class="c-body reveal d2">Pas de formulaire. On choisit ensemble : alertes week-end (P-MON) ou reporting du 1<sup>er</sup> (P08). Vous repartez avec une estimation d'heures récupérées — offert, sans engagement.</p>
+      <div class="c-btns reveal d3">
+        <a class="btn btn-v btn-ring" href="mailto:sederaandriamanga@gmail.com?subject=Diagnostic%2030%20min%20agence%20SEA&body=Bonjour%20Sedera%2C%20je%20souhaite%20un%20diagnostic%20de%2030%20min.">Réserver le diagnostic</a>
+        <a class="btn btn-o" href="https://github.com/seder2610" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn btn-g" href="https://www.linkedin.com/in/sedera-andriamanga/" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+      <div class="c-footer reveal d4">
+        <span>Antananarivo · Remote FR/EU · UTC+3</span>
+        <a href="mailto:sederaandriamanga@gmail.com">sederaandriamanga@gmail.com</a>
+        <a href="https://github.com/seder2610" target="_blank" rel="noopener">github.com/seder2610</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>Sedera Andriamanga · Portfolio Automation IA</span>
+  <span>© 2025 · Remote France</span>
+</footer>
+
+<script>
+(function(){
+  /* ── Scroll progress ── */
+  const progFill = document.getElementById('scroll-prog-fill');
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+    progFill.style.height = pct + '%';
+  }, {passive:true});
+
+  /* ── Nav stuck ── */
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('stuck', window.scrollY > 60), {passive:true});
+
+  /* ── Cursor glow ── */
+  const cg = document.getElementById('cglow');
+  let mx=0,my=0,gx=0,gy=0;
+  document.addEventListener('mousemove', e=>{mx=e.clientX;my=e.clientY;cg.style.opacity='1';});
+  (function ag(){gx+=(mx-gx)*.07;gy+=(my-gy)*.07;cg.style.left=gx+'px';cg.style.top=gy+'px';requestAnimationFrame(ag);})();
+
+  /* ── Particles ── */
+  const cvs=document.getElementById('particles'),ctx=cvs.getContext('2d');
+  let W,H,pts=[];
+  function rsz(){W=cvs.width=window.innerWidth;H=cvs.height=window.innerHeight;}
+  rsz(); window.addEventListener('resize',rsz);
+  function mkP(){return{x:Math.random()*W,y:H+20,r:Math.random()*1.5+.4,vx:(Math.random()-.5)*.4,vy:-(Math.random()*.7+.3),life:0,max:Math.random()*200+120};}
+  for(let i=0;i<42;i++){const p=mkP();p.y=Math.random()*H;p.life=Math.random()*p.max;pts.push(p);}
+  (function ap(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach((p,i)=>{
+      p.x+=p.vx;p.y+=p.vy;p.life++;
+      const t=p.life/p.max,a=t<.2?t/.2:t>.8?(1-t)/.2:1;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(167,139,250,${a*.5})`;ctx.fill();
+      if(p.life>=p.max)pts[i]=mkP();
+    });
+    requestAnimationFrame(ap);
+  })();
+
+  /* ── Droplets ── */
+  function spawnDrops(id,n){
+    const w=document.getElementById(id); if(!w)return;
+    for(let i=0;i<n;i++){
+      const d=document.createElement('div'),s=document.createElement('div');
+      const sz=Math.random()*3+1.5,left=Math.random()*100,delay=Math.random()*9,dur=Math.random()*6+5,fall=(Math.random()*60+60)+'vh';
+      d.className='drop';d.style.cssText=`left:${left}%;top:0;width:${sz}px;height:${sz*2.8}px;background:linear-gradient(to bottom,transparent,rgba(167,139,250,.5));--fall:${fall};animation-duration:${dur}s;animation-delay:${delay}s;`;
+      s.className='splash';s.style.cssText=`left:${left}%;top:${fall};width:${sz*4}px;height:${sz*4}px;animation-duration:${dur*.15}s;animation-delay:${delay+dur*.88}s;margin-left:-${sz*2}px;margin-top:-${sz*2}px;`;
+      w.appendChild(d);w.appendChild(s);
+    }
+  }
+  spawnDrops('hero-drops',16);spawnDrops('dev-drops',10);spawnDrops('svc-drops',12);spawnDrops('amap-drops',8);spawnDrops('contact-drops',10);
+
+  /* ── Marquee content ── */
+  const tools=['n8n','Python','JavaScript','OpenAI API','Google Ads API','Meta API','GA4','PostgreSQL','Node.js','Odoo ERP','Slack API','Notion API','Webhooks','REST API','AI Agents','Looker Studio','Docker','GitHub'];
+  const track=document.getElementById('mtrack');
+  if(track){
+    const items=[...tools,...tools].map(t=>`<span class="marquee-item"><span class="marquee-dot"></span>${t}</span>`).join('');
+    track.innerHTML=items+items;
+  }
+
+  /* ── Parallax ── */
+  window.addEventListener('scroll',()=>{
+    const sy=window.scrollY;
+    document.querySelectorAll('[data-parallax]').forEach(el=>{
+      el.style.transform=`translateY(${sy*parseFloat(el.dataset.parallax)}px)`;
+    });
+  },{passive:true});
+
+  /* ── Scroll reveals ── */
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('is-visible');obs.unobserve(e.target);}});
+  },{threshold:.1});
+  document.querySelectorAll('.reveal,.reveal-l,.reveal-r,.reveal-s').forEach(el=>obs.observe(el));
+
+  /* ── Timeline ── */
+  const tlObs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('is-visible');tlObs.unobserve(e.target);}});
+  },{threshold:.3});
+  document.querySelectorAll('.tl-item').forEach(el=>tlObs.observe(el));
+
+  /* ── Tags stagger ── */
+  const tagsObs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.querySelectorAll('.tag').forEach((t,i)=>setTimeout(()=>t.classList.add('is-visible'),i*65));
+        tagsObs.unobserve(e.target);
+      }
+    });
+  },{threshold:.2});
+  const tw=document.getElementById('tags-wrap'); if(tw)tagsObs.observe(tw);
+
+  /* ── Counters ── */
+  document.querySelectorAll('.count').forEach(el=>{
+    const cObs=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(!e.isIntersecting)return;
+        const val=+el.dataset.val,pre=el.dataset.pre||'',suf=el.dataset.suf||'';
+        let t0=null;
+        (function tick(t){
+          if(!t0)t0=t;
+          const p=Math.min((t-t0)/1600,1),ease=1-Math.pow(1-p,3);
+          el.textContent=pre+Math.round(ease*val)+suf;
+          if(p<1)requestAnimationFrame(tick);
+        })(performance.now());
+        cObs.unobserve(e.target);
       });
-    }, { threshold: 0.15 });
-    document.querySelectorAll(".reveal").forEach((el) => obs.observe(el));
-  </script>
+    },{threshold:.5});
+    cObs.observe(el);
+  });
+
+  /* ── Typing effect ── */
+  const typedEl=document.getElementById('typed-el');
+  if(typedEl){
+    typedEl.classList.add('typed');
+    const words=['Portfolio IA','Dev → Automation','n8n · OpenAI · Ads'];
+    let wi=0,ci=0,deleting=false;
+    function typeStep(){
+      const w=words[wi];
+      if(!deleting){typedEl.textContent=w.slice(0,++ci);if(ci===w.length){deleting=true;setTimeout(typeStep,2200);return;}}
+      else{typedEl.textContent=w.slice(0,--ci);if(ci===0){deleting=false;wi=(wi+1)%words.length;}}
+      setTimeout(typeStep,deleting?60:110);
+    }
+    setTimeout(typeStep,1200);
+  }
+
+  /* ── 3D Tilt ── */
+  function addTilt(el,strength){
+    if(!el)return;
+    el.addEventListener('mousemove',e=>{
+      const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+      el.style.transform=`perspective(900px) rotateX(${-y*strength}deg) rotateY(${x*strength}deg) translateZ(8px)`;
+    });
+    el.addEventListener('mouseleave',()=>{el.style.transform='';});
+  }
+  addTilt(document.getElementById('tilt-card'),14);
+  document.querySelectorAll('.svc').forEach(s=>{
+    addTilt(s,8);
+    s.addEventListener('mousemove',e=>{
+      const r=s.getBoundingClientRect(),gl=s.querySelector('.svc-glow');
+      if(gl){gl.style.left=(e.clientX-r.left)+'px';gl.style.top=(e.clientY-r.top)+'px';}
+    });
+  });
+  document.querySelectorAll('.mcard').forEach(c=>addTilt(c,6));
+
+  /* ── Magnetic buttons ── */
+  document.querySelectorAll('.btn').forEach(btn=>{
+    btn.addEventListener('mousemove',e=>{
+      const r=btn.getBoundingClientRect(),x=(e.clientX-r.left-r.width/2)*.2,y=(e.clientY-r.top-r.height/2)*.2;
+      btn.style.transform=`translate(${x}px,${y}px) translateY(-3px)`;
+    });
+    btn.addEventListener('mouseleave',()=>btn.style.transform='');
+  });
+
+  /* ── Button ripple ── */
+  document.querySelectorAll('.btn').forEach(btn=>{
+    btn.addEventListener('click',e=>{
+      const r=btn.getBoundingClientRect(),sz=Math.max(r.width,r.height);
+      const rpl=document.createElement('span');
+      rpl.style.cssText=`position:absolute;width:${sz}px;height:${sz}px;border-radius:50%;background:rgba(255,255,255,.22);left:${e.clientX-r.left-sz/2}px;top:${e.clientY-r.top-sz/2}px;transform:scale(0);animation:ripple-anim .65s ease-out forwards;pointer-events:none;`;
+      btn.appendChild(rpl);
+      setTimeout(()=>rpl.remove(),700);
+    });
+  });
+  const rstyle=document.createElement('style');
+  rstyle.textContent='@keyframes ripple-anim{to{transform:scale(3);opacity:0}}';
+  document.head.appendChild(rstyle);
+
+  /* ── Hero mouse parallax ── */
+  document.getElementById('hero').addEventListener('mousemove',e=>{
+    const cx=window.innerWidth/2,cy=window.innerHeight/2;
+    const dx=(e.clientX-cx)/cx,dy=(e.clientY-cy)/cy;
+    document.querySelectorAll('.hero-name [data-parallax]').forEach(el=>{
+      const s=parseFloat(el.dataset.parallax)*40;
+      el.style.transform=`translate(${dx*s}px,${dy*s}px)`;
+    });
+  });
+
+  /* ── Agency problems map ── */
+  (function agencyMap(){
+    const MAIL='sederaandriamanga@gmail.com';
+    const CATS=[
+      {id:'sea',label:'Priorité SEA',color:'#2ee6d6'},{id:'all',label:'Tout',color:'#94a3b8'},
+      {id:'ads',label:'Pub & media',color:'#f472b6'},{id:'data',label:'Data & analyse',color:'#34d399'},
+      {id:'client',label:'Client & relation',color:'#fb923c'},{id:'ops',label:'Opérations',color:'#fbbf24'},
+      {id:'content',label:'Contenu',color:'#a78bfa'},{id:'strategy',label:'Stratégie',color:'#60a5fa'},
+    ];
+    const PROBLEMS=[
+      {cat:'ads',sea:true,color:'#f472b6',bg:'rgba(244,114,182,.12)',title:'Compte Ads qui dérape le week-end',prob:"Budget qui dépasse ou ROAS qui chute un samedi soir — personne ne voit l'alerte avant que le client appelle lundi.",sol:'Règles de seuil + alerte Slack en moins de 15 min (offre P-MON).',tag:'Alertes P-MON'},
+      {cat:'data',sea:true,color:'#34d399',bg:'rgba(52,211,153,.12)',title:'Analyse de performance trop lente',prob:'Les rapports manuels arrivent trop tard pour corriger les campagnes en cours.',sol:'Résumés actionnables depuis les APIs des plateformes + alerting automatique.',tag:'Analytics'},
+      {cat:'data',sea:true,color:'#34d399',bg:'rgba(52,211,153,.12)',title:'Données clients fragmentées',prob:'Les données sont éparpillées entre CRM, réseaux sociaux, email et analytics.',sol:'Centralisation et enrichissement des profils — couche unique entre outils.',tag:'Données'},
+      {cat:'client',sea:true,color:'#fb923c',bg:'rgba(251,146,60,.12)',title:'Reporting client fastidieux',prob:"La préparation des rapports mensuels mobilise des heures d'account managers.",sol:'Génération automatique de rapports à partir des données, prêts à envoyer.',tag:'Reporting auto',demoHref:'https://github.com/seder2610/rapport_marketing_mensuel'},
+      {cat:'client',sea:true,color:'#fb923c',bg:'rgba(251,146,60,.12)',title:'Réponses lentes aux demandes clients',prob:'Les clients attendent ; les briefs sont mal compris, créant de la friction.',sol:'Pré-qualification et routage automatique vers la bonne personne / le bon template.',tag:'Réactivité'},
+      {cat:'ops',sea:true,color:'#fbbf24',bg:'rgba(251,191,36,.12)',title:'Onboarding client long',prob:"Collecter toutes les infos stratégiques d'un nouveau client prend des semaines.",sol:'Questionnaires adaptatifs + création auto des dossiers / accès / mails.',tag:'Onboarding'},
+      {cat:'ads',sea:true,color:'#f472b6',bg:'rgba(244,114,182,.12)',title:'Optimisation des enchères complexe',prob:"Les plateformes changent ; l'expertise pointue est rare.",sol:"Alertes + règles + tableaux de bord — l'IA en support, pas en remplacement aveugle.",tag:'Media'},
+      {cat:'data',sea:true,color:'#34d399',bg:'rgba(52,211,153,.12)',title:'Attribution incertaine',prob:'Impossible de savoir quel canal a vraiment converti dans un parcours multi-touch.',sol:"Modèles d'attribution et règles métier + reporting lisible pour l'agence.",tag:'Attribution'},
+      {cat:'content',sea:false,color:'#a78bfa',bg:'rgba(167,139,250,.15)',title:'Production de contenu trop lente',prob:'Délais courts, équipes sous-staffées : la production scalable est un goulot permanent.',sol:'Génération de brouillons, visuels et scripts en quelques minutes avec des LLM.',tag:'Génération IA'},
+      {cat:'content',sea:false,color:'#a78bfa',bg:'rgba(167,139,250,.15)',title:'Manque de cohérence de marque',prob:"Des rédacteurs différents produisent des tonalités incohérentes d'un client à l'autre.",sol:'System prompts / guides de ton qui encodent le brand voice pour chaque client.',tag:'Brand voice'},
+      {cat:'content',sea:false,color:'#a78bfa',bg:'rgba(167,139,250,.15)',title:"Manque d'idées créatives",prob:'La page blanche et la répétition créative épuisent les équipes.',sol:'Brainstorming assisté, variantes de concepts, inspiration depuis les tendances.',tag:'Idéation'},
+      {cat:'content',sea:false,color:'#a78bfa',bg:'rgba(167,139,250,.15)',title:'Traduction & localisation coûteuse',prob:'Adapter les contenus à plusieurs marchés et langues est chronophage et cher.',sol:'Traduction contextuelle et adaptation culturelle avec révision humaine légère.',tag:'Localisation'},
+      {cat:'client',sea:false,color:'#fb923c',bg:'rgba(251,146,60,.12)',title:'Churn difficile à anticiper',prob:'Les signaux de mécontentement sont souvent détectés trop tard.',sol:'Scoring simple sur signaux (emails, tickets) + alertes internes.',tag:'Rétention'},
+      {cat:'ops',sea:false,color:'#fbbf24',bg:'rgba(251,191,36,.12)',title:'Gestion de projet inefficace',prob:'La coordination entre créa, stratégie et media génère retards et doublons.',sol:'Automatisation des handoffs, rappels et statuts entre outils.',tag:'Ops'},
+      {cat:'ops',sea:false,color:'#fbbf24',bg:'rgba(251,191,36,.12)',title:'Veille concurrentielle chronophage',prob:"Surveiller les concurrents de chaque client manuellement ne scale pas.",sol:'Flux de veille + résumés + alertes sur changements détectés.',tag:'Veille'},
+      {cat:'ads',sea:false,color:'#f472b6',bg:'rgba(244,114,182,.12)',title:'Variantes de publicités limitées',prob:'Tester beaucoup de variantes est épuisant et limite les A/B.',sol:'Génération structurée de variantes + validation humaine courte.',tag:'Créa pub'},
+      {cat:'strategy',sea:false,color:'#60a5fa',bg:'rgba(96,165,250,.12)',title:"Ciblage d'audience imprécis",prob:'Les personas manuels sont souvent trop génériques.',sol:'Segmentation à partir des données comportementales réelles.',tag:'Audience'},
+      {cat:'strategy',sea:false,color:'#60a5fa',bg:'rgba(96,165,250,.12)',title:'Prévision de tendances',prob:"Manque d'outils pour anticiper les shifts avant les concurrents.",sol:'Veille structurée + synthèses récurrentes pour la direction.',tag:'Stratégie'},
+    ];
+    const fEl=document.getElementById('amap-filters'),gEl=document.getElementById('amap-grid');
+    const shEl=document.getElementById('amap-shown'),totEl=document.getElementById('amap-total');
+    if(!fEl||!gEl)return;
+    totEl.textContent=String(PROBLEMS.length);
+    let active='sea';
+    function mailto(p){return'mailto:'+MAIL+'?subject='+encodeURIComponent('Automation — '+p.title)+'&body='+encodeURIComponent('Bonjour Sedera,\n\nJe suis intéressé(e) par : '+p.title+'.\n\nContexte :\n\n');}
+    function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+    CATS.forEach(c=>{
+      const btn=document.createElement('button');
+      btn.type='button';btn.className='amap-cat'+(c.id==='sea'?' on':'');
+      btn.innerHTML='<span class="dot" style="background:'+c.color+'"></span>'+esc(c.label);
+      btn.onclick=()=>{active=c.id;fEl.querySelectorAll('.amap-cat').forEach(b=>b.classList.remove('on'));btn.classList.add('on');render();};
+      fEl.appendChild(btn);
+    });
+    function render(){
+      const list=PROBLEMS.filter(p=>active==='all'?true:active==='sea'?p.sea:p.cat===active);
+      shEl.textContent=String(list.length);gEl.innerHTML='';
+      list.forEach((p,i)=>{
+        const a=document.createElement('article');a.className='amap-card';a.style.animationDelay=(i*40)+'ms';
+        const demo=p.demoHref?'<a class="amap-cta demo" href="'+p.demoHref+'" target="_blank" rel="noopener">Voir la démo publique</a>':'<span class="amap-soon">Démo n8n : à venir</span>';
+        a.innerHTML='<h4>'+esc(p.title)+'</h4><span class="amap-badge" style="background:'+p.bg+';color:'+p.color+'">'+esc(p.tag)+'</span><p class="amap-lbl">Problème</p><p class="amap-prob">'+esc(p.prob)+'</p><p class="amap-lbl">Solution IA + workflows</p><p class="amap-sol"><span style="opacity:.8;flex-shrink:0">✦</span><span>'+esc(p.sol)+'</span></p><div class="amap-foot">'+demo+'<a class="amap-cta" href="'+mailto(p)+'">Proposer ce sujet</a></div>';
+        gEl.appendChild(a);
+      });
+    }
+    render();
+  })();
+
+  /* ── Liquid blob ── */
+  const bp=document.querySelector('#blob path');
+  if(bp){
+    const shapes=[
+      'M360,220 C460,120 580,150 610,270 C640,390 560,480 430,510 C300,540 180,490 160,370 C140,250 220,160 300,170 C340,176 310,260 360,220 Z',
+      'M300,180 C420,90 600,140 630,290 C660,440 540,520 390,520 C240,520 130,450 140,320 C150,190 230,120 300,180 Z',
+      'M390,210 C500,110 580,180 600,310 C620,440 520,520 380,510 C240,500 150,420 160,300 C170,180 280,110 390,210 Z',
+    ];
+    let si=0,t0=null,from=shapes[0];
+    function eio(t){return t<.5?2*t*t:-1+(4-2*t)*t;}
+    function ab(ts){
+      if(!t0)t0=ts;
+      const f=Math.min((ts-t0)/4200,1);
+      if(f>=1){from=shapes[(si+1)%shapes.length];si=(si+1)%shapes.length;t0=null;}
+      bp.setAttribute('d',from);
+      requestAnimationFrame(ab);
+    }
+    requestAnimationFrame(ab);
+  }
+
+})();
+</script>
 </body>
 </html>
